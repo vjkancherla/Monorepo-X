@@ -38,7 +38,7 @@ pipeline {
 
                     // Detect changes in individual microservices
                     for (file in changedFiles) {
-                        if (file.startsWith('microservices/Podinfo-Frontend-App')) {
+                        if (file.startsWith('Microservices/Podinfo-Frontend-App')) {
                             changes.'Podinfo-Frontend-App' = true
                         } else if (file.startsWith('microservice2')) {
                             changes.'microservice2' = true
