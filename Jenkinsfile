@@ -15,11 +15,26 @@ pipeline {
                         microservice3: false,
                     ]
 
-                    // Get a list of all changed files
-                    def changedFiles = sh(
-                        script: "git diff --name-only ${branchToCompare}",
-                        returnStdout: true
-                    ).trim().split("\n")
+                    // Check if there's a previous commit
+                    def previousCommitExists = sh(
+                        script: "git rev-parse ${branchToCompare}^",
+                        returnStatus: true
+                    ) == 0
+
+                    if (previousCommitExists) {
+                      // Get a list of all changed files
+                      changedFiles = sh(
+                          script: "git diff --name-only ${branchToCompare}^ ${branchToCompare}",
+                          returnStdout: true
+                      ).trim().split("\n")
+                    }
+                    else {
+                        // If there's no previous commit, consider all files as changed
+                        changedFiles = sh(
+                            script: "git ls-files",
+                            returnStdout: true
+                        ).trim().split("\n")
+                    }
 
                     // Detect changes in individual microservices
                     for (file in changedFiles) {
@@ -75,7 +90,7 @@ pipeline {
                 }
             }
             steps {
-                println "Nothing to do, yet."  
+                println "Nothing to do, yet."
             }
         }
     }
