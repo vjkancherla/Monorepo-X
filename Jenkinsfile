@@ -53,7 +53,7 @@ pipeline {
                 }
             }
             steps {
-                // Your build/test steps for microservice1
+                println "Nothing to do, yet."
             }
         }
 
@@ -64,7 +64,7 @@ pipeline {
                 }
             }
             steps {
-                // Your build/test steps for microservice2
+                println "Nothing to do, yet."
             }
         }
 
@@ -75,7 +75,7 @@ pipeline {
                 }
             }
             steps {
-                // Your build/test steps for microservice3
+                println "Nothing to do, yet."  
             }
         }
     }
