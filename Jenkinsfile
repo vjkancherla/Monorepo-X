@@ -69,7 +69,7 @@ pipeline {
             }
             steps {
               script {
-                  def jenkinsfilePath = '`pwd`/Microservices/Podinfo-Frontend-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy'
+                  def jenkinsfilePath = 'Microservices/Podinfo-Frontend-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy'
 
                   // Read Jenkinsfile contents
                   def jenkinsfileContents = readFile(jenkinsfilePath)

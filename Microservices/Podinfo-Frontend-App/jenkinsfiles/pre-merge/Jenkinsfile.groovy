@@ -11,7 +11,7 @@ environment {
 
 
 stage("Package-Image") {
-  dir('`pwd`/podinfo-application-frontend')
+  dir('Microservices/podinfo-application-frontend')
   {
     script {
         docker.build('${IMAGE_REPO}:${IMAGE_TAG}', 'Dockerfile')
