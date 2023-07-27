@@ -68,7 +68,9 @@ pipeline {
                 }
             }
             steps {
+              script {
                 println "Nothing to do, yet."
+              }
             }
         }
 
@@ -79,7 +81,9 @@ pipeline {
                 }
             }
             steps {
+              script {
                 println "Nothing to do, yet."
+              }
             }
         }
 
@@ -90,7 +94,9 @@ pipeline {
                 }
             }
             steps {
+              script {
                 println "Nothing to do, yet."
+              }   
             }
         }
     }
