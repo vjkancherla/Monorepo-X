@@ -64,7 +64,7 @@ pipeline {
         stage('Podinfo-Frontend-App') {
             when {
                 expression {
-                    return env.MICROSERVICE1_CHANGED == 'true'
+                    return env.PODINFO-FRONTEND-APP_CHANGED == 'true'
                 }
             }
             steps {
