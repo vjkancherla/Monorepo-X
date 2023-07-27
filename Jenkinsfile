@@ -69,7 +69,13 @@ pipeline {
             }
             steps {
               script {
-                println "Nothing to do, yet."
+                  def jenkinsfilePath = '`pwd`/Microservices/Podinfo-Frontend-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy'
+
+                  // Read Jenkinsfile contents
+                  def jenkinsfileContents = readFile(jenkinsfilePath)
+
+                  // Evaluate the Jenkinsfile
+                 evaluate(jenkinsfileContents)
               }
             }
         }
