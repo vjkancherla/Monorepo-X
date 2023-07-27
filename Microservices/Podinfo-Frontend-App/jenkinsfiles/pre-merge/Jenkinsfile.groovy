@@ -11,15 +11,15 @@ stage("Package-Image") {
         echo "IMAGE_REPO: ${env.IMAGE_REPO}"
         echo "IMAGE_TAG: ${env.IMAGE_TAG}"
 
-        docker.build('${env.IMAGE_REPO}:${env.IMAGE_TAG}', 'Dockerfile')
+        docker.build("${env.IMAGE_REPO}:${env.IMAGE_TAG}", 'Dockerfile')
     }
   }
 }
 
 stage("Push-Image-To-DockerHub") {
   script {
-    docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_CREDENTIALS') {
-        docker.image('${env.IMAGE_REPO}:${env.IMAGE_TAG}').push()
+    docker.withRegistry('https://registry.hub.docker.com', "${env.DOCKER_CREDENTIALS}") {
+        docker.image("${env.IMAGE_REPO}:${env.IMAGE_TAG}").push()
     }
   }
 }
