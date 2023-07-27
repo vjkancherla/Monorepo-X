@@ -10,7 +10,7 @@ pipeline {
 
                     // Initialize a changes map
                     def changes = [
-                        microservice1: false,
+                        Podinfo-Frontend-App: false,
                         microservice2: false,
                         microservice3: false,
                     ]
@@ -38,8 +38,8 @@ pipeline {
 
                     // Detect changes in individual microservices
                     for (file in changedFiles) {
-                        if (file.startsWith('microservice1')) {
-                            changes.microservice1 = true
+                        if (file.startsWith('microservices/Podinfo-Frontend-App')) {
+                            changes.Podinfo-Frontend-App = true
                         } else if (file.startsWith('microservice2')) {
                             changes.microservice2 = true
                         } else if (file.startsWith('microservice3')) {
@@ -61,7 +61,7 @@ pipeline {
         }
 
         // Use changes in your build/test stages
-        stage('Microservice1') {
+        stage('Podinfo-Frontend-App') {
             when {
                 expression {
                     return env.MICROSERVICE1_CHANGED == 'true'
