@@ -1,0 +1,27 @@
+#Custom Jenkins Image with Kubectl and Helm tools installed.
+#This image will be used to run Jenkins on Docker.
+
+FROM jenkins/jenkins:lts
+
+USER root
+
+# Update system packages
+RUN apt-get update && \
+    apt-get upgrade -y && \
+    apt-get install -y curl
+
+# Install kubectl
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    chmod +x kubectl && \
+    mv kubectl /usr/local/bin/
+
+# Install helm
+RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
+    chmod 700 get_helm.sh && \
+    ./get_helm.sh
+
+# Clean up
+RUN apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+USER jenkins
