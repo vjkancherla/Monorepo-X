@@ -10,9 +10,9 @@ pipeline {
 
                     // Initialize a changes map
                     def changes = [
-                        Podinfo-Frontend-App: false,
-                        microservice2: false,
-                        microservice3: false,
+                        'Podinfo-Frontend-App': false,
+                        'microservice2': false,
+                        'microservice3': false,
                     ]
 
                     // Check if there's a previous commit
