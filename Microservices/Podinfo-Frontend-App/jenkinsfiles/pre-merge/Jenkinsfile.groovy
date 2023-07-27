@@ -10,7 +10,8 @@ stage("Package-Image") {
         echo "GIT_COMMIT_HASH: ${env.GIT_COMMIT_HASH}"
         echo "IMAGE_REPO: ${env.IMAGE_REPO}"
         echo "IMAGE_TAG: ${env.IMAGE_TAG}"
-        docker.build('${IMAGE_REPO}:${IMAGE_TAG}', 'Dockerfile')
+
+        docker.build('${env.IMAGE_REPO}:${env.IMAGE_TAG}', 'Dockerfile')
     }
   }
 }
@@ -18,7 +19,7 @@ stage("Package-Image") {
 stage("Push-Image-To-DockerHub") {
   script {
     docker.withRegistry('https://registry.hub.docker.com', 'DOCKER_CREDENTIALS') {
-        docker.image('${IMAGE_REPO}:${IMAGE_TAG}').push()
+        docker.image('${env.IMAGE_REPO}:${env.IMAGE_TAG}').push()
     }
   }
 }
