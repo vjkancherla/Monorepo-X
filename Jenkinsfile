@@ -64,7 +64,7 @@ pipeline {
         stage('Podinfo-Frontend-App') {
             when {
                 expression {
-                    return env.PODINFO-FRONTEND-APP_CHANGED == 'true'
+                    return env.'PODINFO-FRONTEND-APP_CHANGED'== 'true'
                 }
             }
             steps {
@@ -77,7 +77,7 @@ pipeline {
         stage('Microservice2') {
             when {
                 expression {
-                    return env.MICROSERVICE2_CHANGED == 'true'
+                    return env.'MICROSERVICE2_CHANGED' == 'true'
                 }
             }
             steps {
@@ -90,13 +90,13 @@ pipeline {
         stage('Microservice3') {
             when {
                 expression {
-                    return env.MICROSERVICE3_CHANGED == 'true'
+                    return env.'MICROSERVICE3_CHANGED' == 'true'
                 }
             }
             steps {
               script {
                 println "Nothing to do, yet."
-              }   
+              }
             }
         }
     }
