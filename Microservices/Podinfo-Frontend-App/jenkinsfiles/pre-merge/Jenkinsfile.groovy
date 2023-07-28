@@ -11,7 +11,7 @@ stage("Package-Image") {
         echo "IMAGE_REPO: ${env.IMAGE_REPO}"
         echo "IMAGE_TAG: ${env.IMAGE_TAG}"
 
-        sh "buildah bud -t ${env.IMAGE_REPO}:${env.IMAGE_TAG} -f Dockerfile ."
+        sh "buildah -storage-driver vfs bud -t ${env.IMAGE_REPO}:${env.IMAGE_TAG} -f Dockerfile ."
     }
   }
 }
