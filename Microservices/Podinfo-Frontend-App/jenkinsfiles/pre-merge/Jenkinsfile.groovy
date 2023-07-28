@@ -1,6 +1,6 @@
 
 stage("Package-Image") {
-  dir('Microservices/podinfo-application-frontend/src')
+  dir('Microservices/Podinfo-Frontend-App/src')
   {
     script {
 
