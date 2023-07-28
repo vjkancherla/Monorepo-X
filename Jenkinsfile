@@ -10,8 +10,6 @@ pipeline {
       DOCKER_CREDENTIALS = credentials('dockerhub-creds')
       KUBECONFIG_CREDENTIALS = credentials('K3d-config-2')
       STORAGE_OPTS = "--root /var/jenkins_home/.local/share/containers/storage"
-}
-
     }
 
     stages {
