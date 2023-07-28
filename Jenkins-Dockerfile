@@ -8,13 +8,16 @@ USER root
 # Update system packages and install prerequisites
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y apt-transport-https software-properties-common
+    apt-get install -y apt-transport-https software-properties-common sudo
 
 # Install Buildah
 RUN echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list && \
     curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key" | apt-key add - && \
     apt-get update && \
     apt-get -y install buildah
+
+# Give Jenkins user sudo permissions
+RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
 # Install kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \

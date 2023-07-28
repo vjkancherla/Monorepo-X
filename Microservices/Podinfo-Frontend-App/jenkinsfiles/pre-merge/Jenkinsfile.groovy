@@ -11,7 +11,7 @@ stage("Package-Image") {
         echo "IMAGE_REPO: ${env.IMAGE_REPO}"
         echo "IMAGE_TAG: ${env.IMAGE_TAG}"
 
-        sh "buildah --storage-driver vfs ${env.STORAGE_OPTS} bud -t ${env.IMAGE_REPO}:${env.IMAGE_TAG} -f Dockerfile ."
+        sh "sudo buildah --storage-driver vfs ${env.STORAGE_OPTS} bud -t ${env.IMAGE_REPO}:${env.IMAGE_TAG} -f Dockerfile ."
     }
   }
 }
@@ -21,7 +21,7 @@ stage("Push-Image-To-DockerHub") {
     withCredentials([usernamePassword(credentialsId: "${env.DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
         sh '''
             echo ${DOCKER_PASSWORD} | buildah login -u ${DOCKER_USERNAME} --password-stdin docker.io
-            buildah push ${IMAGE_REPO}:${IMAGE_TAG} docker://${IMAGE_REPO}:${IMAGE_TAG}
+            sudo buildah push ${IMAGE_REPO}:${IMAGE_TAG} docker://${IMAGE_REPO}:${IMAGE_TAG}
         '''
     }
   }
