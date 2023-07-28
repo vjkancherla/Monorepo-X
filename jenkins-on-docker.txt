@@ -42,7 +42,7 @@ vjkancherla/my-jenkins:v1
 [3] Login to Jenkins console: https://localhost:8080, and finish setup.
 
 
-[4] Install the Kubernetes Plugin in Jenkins
+[4] Install the Kubernetes plugin in Jenkins
 
 
 [5] To connect Jenkins to K3D, we will need the kubeconfig file that K3D generates for us. However, we will need to update it a bit.

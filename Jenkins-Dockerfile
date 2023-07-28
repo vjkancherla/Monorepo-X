@@ -1,14 +1,20 @@
-#Custom Jenkins Image with Kubectl and Helm tools installed.
+#Custom Jenkins Image with Kubectl, Helm and Buildah tools installed.
 #This image will be used to run Jenkins on Docker.
 
 FROM jenkins/jenkins:lts
 
 USER root
 
-# Update system packages
+# Update system packages and install prerequisites
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y curl
+    apt-get install -y apt-transport-https software-properties-common
+
+# Install Buildah
+RUN echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list && \
+    curl -L "https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/Debian_10/Release.key" | apt-key add - && \
+    apt-get update && \
+    apt-get -y install buildah
 
 # Install kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
