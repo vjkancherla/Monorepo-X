@@ -19,6 +19,9 @@ RUN echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontai
 # Give Jenkins user sudo permissions
 RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
+# Ensure jenkins user owns the Buildah storage directory
+RUN mkdir -p /var/jenkins_home/.local/share/containers/storage && chown -R jenkins:jenkins /var/jenkins_home/.local/share/containers/storage
+
 # Install kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     chmod +x kubectl && \
