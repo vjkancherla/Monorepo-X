@@ -17,7 +17,7 @@ stage("Package-Image") {
 
 stage("Push-Image-To-DockerHub") {
   script {
-    withCredentials([usernamePassword(credentialsId: "${env.DOCKER_CREDENTIALS}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
         sh '''
             echo ${DOCKER_PASSWORD} | sudo docker login -u ${DOCKER_USERNAME} --password-stdin
             sudo docker push ${IMAGE_REPO}:${IMAGE_TAG}
