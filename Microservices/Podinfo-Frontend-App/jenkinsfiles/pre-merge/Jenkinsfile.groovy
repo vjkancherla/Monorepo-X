@@ -25,3 +25,20 @@ stage("Push-Image-To-DockerHub") {
     }
   }
 }
+
+stage('Deploy to K3D Dev') {
+  dir('Microservices/Podinfo-Frontend-App/helm-chart') {
+      script {
+        withCredentials([file(credentialsId: 'K3d-config-2', variable: 'KUBECONFIG')]) {
+          sh """
+            export KUBECONFIG=${KUBECONFIG}
+            helm upgrade --install helm-pi-fe-dev -n dev --create-namespace \
+            --values namespaces/dev/values.yaml \
+            --set image.repository=${env.IMAGE_REPO} \
+            --set image.tag=${env.IMAGE_TAG} \
+            .
+          """
+        }
+      }
+  }
+}

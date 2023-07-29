@@ -21,8 +21,8 @@ You can create a Dockerfile, where you start from the Jenkins image and add the 
 >> docker build -t vjkancherla/my-jenkins:v1 -f ./Jenkins-Dockerfile
 >> docker push docker.io/vjkancherla/my-jenkins:v1
 
-[
-2.1] Install and Run Jenkins, use the network identified above:
+
+[2.1] Install and Run Jenkins, use the network identified above:
 
 >> docker run --name jenkins-docker \
 -p 8080:8080 -p 50000:50000 \
@@ -30,6 +30,10 @@ You can create a Dockerfile, where you start from the Jenkins image and add the 
 -v /var/run/docker.sock:/var/run/docker.sock \
 --network=k3d-mycluster \
 vjkancherla/my-jenkins:v1
+
+
+Note that we are mounting a host directory to the container so that changes are persisted.
+Note that we are also mounting the MacBooks Docker socket. This is because, its hard to run docker within a docker container.
 
 Stop/Start Jenkins
 >> docker stop jenkins-docker

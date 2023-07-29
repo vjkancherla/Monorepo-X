@@ -7,7 +7,6 @@ pipeline {
       GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
       IMAGE_REPO = "vjkancherla/podinfo_application_jenkins"
       IMAGE_TAG = "${GIT_COMMIT_HASH}"
-      KUBECONFIG_CREDENTIALS = credentials('K3d-config-2')
     }
 
     stages {
