@@ -27,6 +27,7 @@ You can create a Dockerfile, where you start from the Jenkins image and add the 
 >> docker run --name jenkins-docker \
 -p 8080:8080 -p 50000:50000 \
 -v /Users/vkancherla/Downloads/jenkins-volume:/var/jenkins_home \
+-v /var/run/docker.sock:/var/run/docker.sock \
 --network=k3d-mycluster \
 vjkancherla/my-jenkins:v1
 
@@ -36,6 +37,7 @@ Stop/Start Jenkins
 >> docker run --name jenkins-docker \
 -p 8080:8080 -p 50000:50000 \
 -v /Users/vkancherla/Downloads/jenkins-volume:/var/jenkins_home \
+-v /var/run/docker.sock:/var/run/docker.sock \
 --network=k3d-mycluster \
 vjkancherla/my-jenkins:v1
 
