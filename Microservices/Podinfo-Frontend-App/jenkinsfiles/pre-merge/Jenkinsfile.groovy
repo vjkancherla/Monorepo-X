@@ -42,3 +42,17 @@ stage('Deploy to K3D Dev') {
       }
   }
 }
+
+stage('Delete K3D Dev Helm Release') {
+  dir('Microservices/Podinfo-Frontend-App/helm-chart') {
+    script {
+      input message: 'Do you want to delete the helm release?', ok: 'Yes'
+      withCredentials([file(credentialsId: 'K3d-config-2', variable: 'KUBECONFIG')]) {
+        sh """
+          export KUBECONFIG=${KUBECONFIG}
+          helm delete helm-pi-fe-dev -n dev
+        """
+      }
+    }
+  }
+}
