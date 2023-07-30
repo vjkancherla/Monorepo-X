@@ -29,7 +29,7 @@ stage("Push-Image-To-DockerHub") {
 stage('Deploy to K3D Dev') {
   dir('Microservices/Podinfo-Frontend-App/helm-chart') {
       script {
-        withCredentials([file(credentialsId: 'K3d-config-2', variable: 'KUBECONFIG')]) {
+        withCredentials([file(credentialsId: 'K3d-config', variable: 'KUBECONFIG')]) {
           sh """
             export KUBECONFIG=${KUBECONFIG}
             helm upgrade --install helm-pi-fe-dev -n dev --create-namespace \
@@ -43,11 +43,18 @@ stage('Deploy to K3D Dev') {
   }
 }
 
+stage('Test K3D Dev') {
+    sleep(30)
+    script {
+        sh "kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl frontend-podinfo-dev.dev.svc.cluster.local:9898"
+    }
+}
+
 stage('Delete K3D Dev Helm Release') {
   dir('Microservices/Podinfo-Frontend-App/helm-chart') {
     script {
       input message: 'Do you want to delete the helm release?', ok: 'Yes'
-      withCredentials([file(credentialsId: 'K3d-config-2', variable: 'KUBECONFIG')]) {
+      withCredentials([file(credentialsId: 'K3d-config', variable: 'KUBECONFIG')]) {
         sh """
           export KUBECONFIG=${KUBECONFIG}
           helm delete helm-pi-fe-dev -n dev
