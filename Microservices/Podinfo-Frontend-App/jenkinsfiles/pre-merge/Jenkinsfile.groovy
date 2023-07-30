@@ -26,7 +26,7 @@ stage("Push-Image-To-DockerHub") {
   }
 }
 
-stage('Deploy to K3D Dev') {
+stage('Deploy App to K3D Dev') {
   dir('Microservices/Podinfo-Frontend-App/helm-chart') {
       script {
         withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
@@ -43,10 +43,15 @@ stage('Deploy to K3D Dev') {
   }
 }
 
-stage('Test K3D Dev') {
+stage('Test App in K3D Dev') {
     sleep(30)
     script {
-        sh "kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl frontend-podinfo-dev.dev.svc.cluster.local:9898"
+      withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
+        sh """
+          export KUBECONFIG=${KUBECONFIG}
+          kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl frontend-podinfo-dev.dev.svc.cluster.local:9898
+        """
+      }
     }
 }
 
