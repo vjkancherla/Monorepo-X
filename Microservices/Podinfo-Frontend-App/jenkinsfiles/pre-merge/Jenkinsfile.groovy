@@ -49,7 +49,7 @@ stage('Test App in K3D Dev') {
       withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
         sh """
           export KUBECONFIG=${KUBECONFIG}
-          kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl frontend-podinfo-dev.dev.svc.cluster.local:9898
+          kubectl run curl --image=curlimages/curl -i --rm --restart=Never -- curl helm-pi-fe-dev.dev.svc.cluster.local:9898
         """
       }
     }
