@@ -80,3 +80,21 @@ stage('Delete K3D Dev Helm Release') {
     }
   }
 }
+
+stage('Delete K3D Dev Helm Release') {
+  script {
+    try {
+      timeout(time: 30, unit: 'SECONDS') {
+        input message: 'Do you want to delete the helm release?', ok: 'Yes'
+      }
+      withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
+        sh """
+          export KUBECONFIG=${KUBECONFIG}
+          helm delete helm-pi-fe-dev -n dev
+        """
+      }
+    } catch (Exception e) {
+      echo 'User did not respond within 30 seconds. Proceeding with default behavior.'
+    }
+  }
+}
