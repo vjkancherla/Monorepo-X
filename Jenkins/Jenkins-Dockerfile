@@ -10,9 +10,6 @@ RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sudo # Added sudo here
 
-# Install OpenJDK
-RUN apt-get install -y openjdk-11-jdk
-
 # Install Docker CLI binary
 RUN curl -L -o docker.tgz https://download.docker.com/linux/static/stable/x86_64/docker-20.10.7.tgz && \
     tar xzvf docker.tgz --strip 1 -C /usr/bin docker/docker && \
@@ -34,15 +31,6 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
 RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
     chmod 700 get_helm.sh && \
     ./get_helm.sh
-
-# Install SonarScanner
-RUN curl -L -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip && \
-    unzip sonar-scanner-cli.zip -d /opt/ && \
-    mv /opt/sonar-scanner-4.6.2.2472-linux /opt/sonar-scanner && \
-    rm sonar-scanner-cli.zip
-
-# Set SonarScanner in PATH
-ENV PATH="/opt/sonar-scanner/bin:${PATH}"
 
 # Clean up
 RUN apt-get clean && \

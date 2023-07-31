@@ -39,7 +39,7 @@ b. Display name: Monorepo-X
    main branch name: main
 c. Once project is created, click on it and select "Locally"
 d. generate token and save the token
-Analyze "Monorepo-X": sqp_11815a7c07216bae7ee310fa4d0c27c498fb7311
+ sqp_11815a7c07216bae7ee310fa4d0c27c498fb7311
 
 [2] In Jenins, install SonarQube Scanner Plugin
 
