@@ -1,7 +1,7 @@
 stage("SonarQube-Analysis") {
   dir('Microservices/Podinfo-Frontend-App/src') {
       script {
-           withSonarQubeEnv('SonarQube-on-Docker', 'sonarqube-token') {
+           withSonarQubeEnv(installationName: 'SonarQube-on-Docker', credentialsId: 'sonarqube-token') {
               // Run the SonarScanner for your project with the stored token
               sh "sonar-scanner"
           }
