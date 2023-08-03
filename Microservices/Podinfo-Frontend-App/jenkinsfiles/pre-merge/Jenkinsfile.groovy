@@ -1,5 +1,5 @@
 
-tage("SonarQube-Analysis") {
+stage("SonarQube-Analysis") {
   dir('Microservices/Podinfo-Frontend-App/src') {
       script {
            withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
