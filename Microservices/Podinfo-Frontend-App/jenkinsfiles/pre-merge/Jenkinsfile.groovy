@@ -64,6 +64,7 @@ stage('Test App in K3D Dev') {
     script {
       withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
         sh '''
+          #!/bin/bash   # Add this shebang to use bash shell
           export KUBECONFIG=${KUBECONFIG}
           for i in {1..30}; do
             if kubectl get pods -n dev | grep Running; then
