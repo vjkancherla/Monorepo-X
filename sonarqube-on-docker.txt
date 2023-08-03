@@ -41,7 +41,7 @@ c. Once project is created, click on it and select "Locally"
 d. generate token and save the token
  sqp_11815a7c07216bae7ee310fa4d0c27c498fb7311
 
-[2] In Jenins, install SonarQube Scanner Plugin
+[2] In Jenkins, install SonarQube Scanner Plugin and the Sonar Quality Gate plugin
 
 [3] Create a Jenkins Credential of type "secret text" and save the token from 1.d
 

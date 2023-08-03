@@ -1,4 +1,4 @@
-#Custom Jenkins Image with Kubectl, Helm and DockerClinet tools installed.
+#Custom Jenkins Image with Kubectl, Helm, Docker-clientt and SonarScanner tools installed.
 #This image will be used to run Jenkins on Docker.
 
 FROM --platform=linux/amd64 jenkins/jenkins:lts
