@@ -24,6 +24,9 @@ You can create a Dockerfile, where you start from the Jenkins image and add the 
 
 [2.1] Install and Run Jenkins, use the network identified above:
 
+Note that we are mounting a host directory to the container so that changes are persisted.
+Note that we are also mounting the MacBooks Docker socket. This is because, its hard to run docker within a docker container.
+
 >> docker run --name jenkins-docker \
 -p 8080:8080 -p 50000:50000 \
 -v /Users/vkancherla/Downloads/jenkins-volume:/var/jenkins_home \
@@ -32,10 +35,8 @@ You can create a Dockerfile, where you start from the Jenkins image and add the 
 vjkancherla/my-jenkins:v1
 
 
-Note that we are mounting a host directory to the container so that changes are persisted.
-Note that we are also mounting the MacBooks Docker socket. This is because, its hard to run docker within a docker container.
 
-Stop/Start Jenkins
+[2.2] Stop/Start Jenkins
 >> docker stop jenkins-docker
 >> docker rm jenkins-docker
 >> docker run --name jenkins-docker \
@@ -44,6 +45,7 @@ Stop/Start Jenkins
 -v /var/run/docker.sock:/var/run/docker.sock \
 --network=k3d-mycluster \
 vjkancherla/my-jenkins:v1
+
 
 [3] Login to Jenkins console: https://localhost:8080, and finish setup.
 
