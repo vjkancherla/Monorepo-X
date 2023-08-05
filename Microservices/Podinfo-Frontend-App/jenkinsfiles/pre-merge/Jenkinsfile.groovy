@@ -24,8 +24,7 @@ stage('Test App in K3D Dev') {
 
               service_name=$(kubectl get service -n dev -o jsonpath='{.items[*].metadata.name}')
               kubectl run -n dev curl --image=curlimages/curl -i --rm --restart=Never -- curl ${service_name}:9898
-          ''',
-          shell: 'bash'
+          '''
       }
   }
 }
