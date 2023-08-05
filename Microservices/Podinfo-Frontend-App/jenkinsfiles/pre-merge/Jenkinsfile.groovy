@@ -6,12 +6,12 @@ stage('Test App in K3D Dev') {
           sh script: '''
               export KUBECONFIG=${KUBECONFIG}
 
-              fi=1
-              while [[ "$i" -le 30 ]]; do
+              i=1
+              while [ "$i" -le 30 ]; do
                   if kubectl get pods -n dev | grep -q Running; then
                       echo "Application is running!"
                       break
-                  elif [[ "$i" -eq 30 ]]; then
+                  elif [ "$i" -eq 30 ]; then
                       echo "Application failed to start within the expected time."
                       currentBuild.result = 'FAILURE'
                       exit 1
