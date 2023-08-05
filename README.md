@@ -19,3 +19,11 @@ d. The Microservices' jenkinsfile:
   iv. deploys the image to K3D using helm charts
   v. tests/verifies that the helm release has worked
   vi. [optional/manual] deletes the helm release
+
+[5] To start the Core-Service - Jenkins and SonarQube - run the following command:
+==> cd Monorepo-X/Core-Services
+==> ./start-core-services.sh
+
+[6] To Stop the Core-Service - Jenkins and SonarQube - run the following command:
+==> cd Monorepo-X/Core-Services
+==> ./stop-core-services.sh

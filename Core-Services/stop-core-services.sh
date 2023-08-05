@@ -6,10 +6,20 @@ function verify_command_success {
     echo "Success: $1"
   else
     echo "Error: $1"
+    exit 1
   fi
 }
 
+# Function to print and highlight the current step
+function print_step {
+  local step_name=$1
+  local yellow=$(tput setaf 3) # Yellow text color
+  local reset=$(tput sgr0)     # Reset text color
+  echo "${yellow}--- Running Step: $step_name ---${reset}"
+}
+
 # Step 1: Stop and remove the SonarQube container
+print_step "Stop and remove the SonarQube container"
 docker stop sonarqube
 verify_command_success "Stopped SonarQube container."
 
@@ -17,6 +27,7 @@ docker rm sonarqube
 verify_command_success "Removed SonarQube container."
 
 # Step 2: Stop and remove the Jenkins container
+print_step "Stop and remove the Jenkins container"
 docker stop jenkins-docker
 verify_command_success "Stopped Jenkins container."
 
@@ -24,10 +35,12 @@ docker rm jenkins-docker
 verify_command_success "Removed Jenkins container."
 
 # Step 3: Delete K3D cluster
+print_step "Delete K3D cluster"
 k3d cluster delete mycluster
 verify_command_success "Deleted K3D cluster 'mycluster'."
 
 # Step 4: Verify K3D cluster deletion completion
+print_step "Verify K3D cluster deletion completion"
 cluster_deleted=false
 max_attempts=30
 attempt=1
@@ -50,9 +63,11 @@ if [[ $cluster_deleted == false ]]; then
 fi
 
 # Step 5: Stop Docker Desktop
+print_step "Stop Docker Desktop"
 osascript -e 'quit app "Docker"'
 
 # Step 6: Verify Docker Desktop has stopped
+print_step "Verify Docker Desktop has stopped"
 echo "Verifying Docker Desktop..."
 if [[ $(pgrep Docker) == "" ]]; then
   echo "Docker Desktop has been successfully stopped."

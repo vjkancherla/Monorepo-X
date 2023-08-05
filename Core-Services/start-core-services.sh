@@ -1,6 +1,15 @@
 #!/bin/bash
 
+# Function to print and highlight the current step
+function print_step {
+  local step_name=$1
+  local yellow=$(tput setaf 3) # Yellow text color
+  local reset=$(tput sgr0)     # Reset text color
+  echo "${yellow}--- Running Step: $step_name ---${reset}"
+}
+
 # Step 1: Start Docker desktop
+print_step "Start Docker desktop"
 open -a Docker
 
 # Step 1.1: Verify that Docker desktop has started correctly
@@ -15,6 +24,7 @@ else
 fi
 
 # Step 2: Start K3D cluster
+print_step "Start K3D cluster"
 create_cluster_attempt=1
 create_cluster_max_attempts=3
 
@@ -69,6 +79,7 @@ k3d_mycluster_server_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}
 echo "K3D server IP address: $k3d_mycluster_server_ip"
 
 # Step 5: Start Jenkins in detached mode
+print_step "Start Jenkins in detached mode"
 docker run -d --name jenkins-docker \
 -p 8080:8080 -p 50000:50000 \
 -v /Users/vkancherla/Downloads/jenkins-volume:/var/jenkins_home \
@@ -77,6 +88,7 @@ docker run -d --name jenkins-docker \
 vjkancherla/my-jenkins:v1
 
 # Step 6: Start SonarQube in detached mode
+print_step "Start SonarQube in detached mode"
 docker run -d --name sonarqube \
 -p 9000:9000 -p 9092:9092 \
 -v /Users/vkancherla/Downloads/sonarqube-volume:/opt/sonarqube/data \
@@ -93,23 +105,34 @@ else
   echo "Error: Jenkins and/or SonarQube containers failed to start."
 fi
 
-# Step 6: Copy ~/.kube/config to k3d-kubeconfig
+# Step 8: Get SonarQube server IP address
+sonarqube_server_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' sonarqube)
+echo "SonarQube server IP address: $sonarqube_server_ip"
+
+# Step 9: Copy ~/.kube/config to k3d-kubeconfig
+print_step "Copy ~/.kube/config to k3d-kubeconfig"
 cp ~/.kube/config k3d-kubeconfig
 
-# Step 7: Update k3d-kubeconfig with the correct server IP
+# Step 10: Update k3d-kubeconfig with the correct server IP
+print_step "Update k3d-kubeconfig with the correct server IP"
 sed -i '' "s|server: .*|server: https://$k3d_mycluster_server_ip:6443|g" k3d-kubeconfig
 
-# Print the instructions
-echo "Instructions:"
-echo "1. Create a new Jenkins Global Credential as follows:"
-echo "   Type: secret file"
-echo "   ID: \"k3d-config\""
-echo "   File: $(pwd)/k3d-kubeconfig"
+# ANSI escape codes for text color
+green=$(tput setaf 2)  # Green text color
+yellow=$(tput setaf 3) # Yellow text color
+reset=$(tput sgr0)     # Reset text color
+
+# Print the instructions in highlighted color
+echo "${green}Instructions:${reset}"
+echo "${yellow}1. Create a new Jenkins Global Credential as follows:${reset}"
+echo "${yellow}   Type: secret file${reset}"
+echo "${yellow}   ID: \"k3d-config\"${reset}"
+echo "${yellow}   File: $(pwd)/k3d-kubeconfig${reset}"
 echo ""
-echo "   If required, delete any existing credential with ID -  k3d-config - and create a new one."
+echo "${yellow}   If required, delete any existing credential with ID -  k3d-config - and create a new one.${reset}"
 echo ""
-echo "2. Create/update Sonarqube server URL in Jenkins and set it to http://$sonarqube_server_ip:9000"
+echo "${yellow}2. Create/update Sonarqube server URL in Jenkins and set it to http://$sonarqube_server_ip:9000${reset}"
 echo ""
-echo "3. Open two new iTerm2 tabs and run the following commands to tail Jenkins and SonarQube container logs:"
-echo "docker logs -f jenkins-docker"
-echo "docker logs -f sonarqube"
+echo "${yellow}3. Open two new iTerm2 tabs and run the following commands to tail Jenkins and SonarQube container logs:${reset}"
+echo "${yellow}docker logs -f jenkins-docker${reset}"
+echo "${yellow}docker logs -f sonarqube${reset}"
