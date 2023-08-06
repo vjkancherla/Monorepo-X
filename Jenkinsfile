@@ -72,7 +72,7 @@ pipeline {
             steps {
                 script {
                     // Declare a map to hold all stages
-                    def stages = [:]
+                    def microserviceStages = [:]
 
                     // Initialize a map of microservices and their Jenkinsfile paths
                     def microservices = [
