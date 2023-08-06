@@ -7,6 +7,7 @@ pipeline {
       GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
       IMAGE_REPO = "vjkancherla/podinfo_application_jenkins"
       IMAGE_TAG = "${GIT_COMMIT_HASH}"
+      BRANCH_NAME = env.GIT_BRANCH
     }
 
     stages {
@@ -14,7 +15,7 @@ pipeline {
             steps {
                 script {
                     // Change this to be whatever branches you need to compare
-                    def branchToCompare = 'origin/main'
+                    def baseBranch = 'main'
 
                     // Initialize a changes map
                     def changes = [
@@ -24,26 +25,18 @@ pipeline {
                     ]
 
                     // Fetch the latest from origin
-                    sh "git fetch origin"
+                    sh "git fetch origin main:${baseBranch}"
 
-                    // Check if there's a commit in the branch
-                    def commitExists = sh(script: "git rev-parse ${branchToCompare}", returnStatus: true) == 0
-
-                    def previousCommitExists = false
-
-                    if(commitExists){
-                        // Try to get the previous commit
-                        try {
-                            previousCommitExists = sh(script: "git rev-parse ${branchToCompare}^", returnStatus: true) == 0
-                        } catch (Exception e) {
-                            echo "No previous commit exists"
-                        }
-                    }
+                    // Check if there's a previous commit
+                    def previousCommitExists = sh(
+                        script: "git rev-parse ${baseBranch}",
+                        returnStatus: true
+                    ) == 0
 
                     if (previousCommitExists) {
                       // Get a list of all changed files
                       changedFiles = sh(
-                          script: "git diff --name-only ${branchToCompare}^ ${branchToCompare}",
+                          script: "git diff --name-only ${branchToCompare} ${BRANCH_NAME}",
                           returnStdout: true
                       ).trim().split("\n")
                     }
