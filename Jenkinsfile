@@ -24,7 +24,7 @@ pipeline {
                     ]
 
                     // Fetch the latest from origin
-                    sh "git fetch origin"
+                    sh "git fetch --depth=1 origin main"
 
                     // Check if there's a previous commit
                     def previousCommitExists = sh(
