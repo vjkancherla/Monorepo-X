@@ -1,3 +1,8 @@
+@NonCPS
+def getQualityGateStatus() {
+    return waitForQualityGate().status
+}
+
 stage("SonarQube-Analysis") {
   dir('Microservices/Python-App/src') {
       script {
@@ -7,7 +12,7 @@ stage("SonarQube-Analysis") {
           }
 
           timeout(time: 2, unit: 'MINUTES') {
-           def qgStatus = waitForQualityGate().status
+           def qgStatus = getQualityGateStatus()
            if (qgStatus != 'OK') {
              error "Pipeline aborted due to quality gate failure: ${qgStatus}"
            }
