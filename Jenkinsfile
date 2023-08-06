@@ -23,6 +23,9 @@ pipeline {
                         'microservice3': false,
                     ]
 
+                    // Fetch the latest from origin
+                    sh "git fetch origin"
+
                     // Check if there's a previous commit
                     def previousCommitExists = sh(
                         script: "git rev-parse ${branchToCompare}^",
