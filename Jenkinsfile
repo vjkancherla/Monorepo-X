@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-      PROJECT = "Podinfo-Frontend"
+      PROJECT = "MonoRepo-Microservices"
       REGISTRY_USER = "vjkancherla"
       GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
       IMAGE_REPO = "vjkancherla/podinfo_application_jenkins"
@@ -19,7 +19,7 @@ pipeline {
                     // Initialize a changes map
                     def changes = [
                         'Podinfo-Frontend-App': false,
-                        'microservice2': false,
+                        'Python-App': false,
                         'microservice3': false,
                     ]
 
@@ -48,8 +48,8 @@ pipeline {
                     for (file in changedFiles) {
                         if (file.startsWith('Microservices/Podinfo-Frontend-App')) {
                             changes.'Podinfo-Frontend-App' = true
-                        } else if (file.startsWith('microservice2')) {
-                            changes.'microservice2' = true
+                        } else if (file.startsWith('Microservices/Python-App')) {
+                            changes.'Python-App' = true
                         } else if (file.startsWith('microservice3')) {
                             changes.'microservice3' = true
                         }
@@ -88,15 +88,21 @@ pipeline {
             }
         }
 
-        stage('Microservice2') {
+        stage('Python-App') {
             when {
                 expression {
-                    return env.'MICROSERVICE2_CHANGED' == 'true'
+                    return env.'PYTHON-APP_CHANGED' == 'true'
                 }
             }
             steps {
               script {
-                println "Nothing to do, yet."
+                  def jenkinsfilePath = 'Microservices/Python-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy'
+
+                  // Read Jenkinsfile contents
+                  def jenkinsfileContents = readFile(jenkinsfilePath)
+
+                  // Evaluate the Jenkinsfile
+                 evaluate(jenkinsfileContents)
               }
             }
         }
