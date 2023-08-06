@@ -72,7 +72,7 @@ pipeline {
             steps {
                 script {
                     // Declare a map to hold all stages
-                    def microserviceStages = [:]
+                    def stages = [:]
 
                     // Initialize a map of microservices and their Jenkinsfile paths
                     def microservices = [
@@ -91,24 +91,22 @@ pipeline {
                         println "${microservice} changed? ${changed}"
                         if (changed == 'true') {
                             println "Creating stage for ${microservice}"
+                            // Use microservice name as stage name
+                            stages[microservice] = {
+                                stage(microservice) {
+                                    // Read Jenkinsfile contents
+                                    def jenkinsfileContents = readFile(jenkinsfilePath)
 
-                            microserviceStages[microservice] = {
-                                node {
-                                    stage("${microservice}") {
-                                      // Read Jenkinsfile contents
-                                      def jenkinsfileContents = readFile(jenkinsfilePath)
-
-                                      // Evaluate the Jenkinsfile
-                                      evaluate(jenkinsfileContents)
-                                    }
+                                    // Evaluate the Jenkinsfile
+                                    evaluate(jenkinsfileContents)
                                 }
                             }
                         }
                     }
 
                     // Run all stages in parallel
-                    if (!microserviceStages.isEmpty()) {
-                        parallel microserviceStages
+                    if (!stages.isEmpty()) {
+                        parallel stages
                     }
                 }
             }
