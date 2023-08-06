@@ -41,6 +41,15 @@ c. Once project is created, click on it and select "Locally"
 d. generate token and save the token
  sqp_11815a7c07216bae7ee310fa4d0c27c498fb7311
 
+ [1.1] In SonarQube, create a webhook to let SonarQube post scan results back to Jenkins:
+ a. Find Jenkins container's IP:
+ >> docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' jenkins-docker
+ 172.18.0.6
+ b. For the Monorepo-X project, go to Project Settings>Webhooks
+ c. Create new Webhook:
+ Name: Jenkins-On-Docker
+ URL: http://172.18.0.6/sonarqube-webhook/
+
 [2] In Jenkins, install SonarQube Scanner Plugin and the Sonar Quality Gate plugin
 
 [3] Create a Jenkins Credential of type "secret text" and save the token from 1.d

@@ -6,6 +6,10 @@ ENV MESSAGE="default"
 
 RUN mkdir /app
 
+# Create a new user named 'appuser' and set it as the current user.
+RUN adduser -D appuser
+USER appuser
+
 ADD ./python-app-src /app
 
 WORKDIR /app
