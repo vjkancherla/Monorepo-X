@@ -24,13 +24,21 @@ pipeline {
                     ]
 
                     // Fetch the latest from origin
-                    sh "git fetch --depth=1 origin main"
+                    sh "git fetch origin"
 
-                    // Check if there's a previous commit
-                    def previousCommitExists = sh(
-                        script: "git rev-parse ${branchToCompare}^",
-                        returnStatus: true
-                    ) == 0
+                    // Check if there's a commit in the branch
+                    def commitExists = sh(script: "git rev-parse ${branchToCompare}", returnStatus: true) == 0
+
+                    def previousCommitExists = false
+
+                    if(commitExists){
+                        // Try to get the previous commit
+                        try {
+                            previousCommitExists = sh(script: "git rev-parse ${branchToCompare}^", returnStatus: true) == 0
+                        } catch (Exception e) {
+                            echo "No previous commit exists"
+                        }
+                    }
 
                     if (previousCommitExists) {
                       // Get a list of all changed files
