@@ -98,7 +98,7 @@ pipeline {
                                     def jenkinsfileContents = readFile(jenkinsfilePath)
 
                                     // Evaluate the Jenkinsfile
-                                    evaluate(jenkinsfileContents)
+                                    load(jenkinsfileContents)
                                 }
                             }
                         }
