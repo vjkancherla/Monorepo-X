@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-      PROJECT = "Podinfo-Frontend"
+      PROJECT = "MonoRepo-Microservices"
       REGISTRY_USER = "vjkancherla"
       GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
       IMAGE_REPO = "vjkancherla/podinfo_application_jenkins"
@@ -19,7 +19,7 @@ pipeline {
                     // Initialize a changes map
                     def changes = [
                         'Podinfo-Frontend-App': false,
-                        'microservice2': false,
+                        'Python-App': false,
                         'microservice3': false,
                     ]
 
@@ -48,8 +48,8 @@ pipeline {
                     for (file in changedFiles) {
                         if (file.startsWith('Microservices/Podinfo-Frontend-App')) {
                             changes.'Podinfo-Frontend-App' = true
-                        } else if (file.startsWith('microservice2')) {
-                            changes.'microservice2' = true
+                        } else if (file.startsWith('Microservices/Python-App')) {
+                            changes.'Python-App' = true
                         } else if (file.startsWith('microservice3')) {
                             changes.'microservice3' = true
                         }
@@ -68,49 +68,44 @@ pipeline {
             }
         }
 
-        // Use changes in your build/test stages
-        stage('Podinfo-Frontend-App') {
-            when {
-                expression {
-                    return env.'PODINFO-FRONTEND-APP_CHANGED'== 'true'
-                }
-            }
+        stage('Run Changed Microservices') {
             steps {
-              script {
-                  def jenkinsfilePath = 'Microservices/Podinfo-Frontend-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy'
+                script {
+                    // Declare a map to hold all stages
+                    def stages = [:]
 
-                  // Read Jenkinsfile contents
-                  def jenkinsfileContents = readFile(jenkinsfilePath)
+                    // Initialize a map of microservices and their Jenkinsfile paths
+                    def microservices = [
+                        'Podinfo-Frontend-App': 'Microservices/Podinfo-Frontend-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy',
+                        'Python-App': 'Microservices/Python-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy',
+                        'microservice3': 'microservice3/jenkinsfiles/pre-merge/Jenkinsfile.groovy',
+                    ]
 
-                  // Evaluate the Jenkinsfile
-                 evaluate(jenkinsfileContents)
-              }
-            }
-        }
+                    // For each microservice
+                    for (entry in microservices) {
+                        def microservice = entry.key
+                        def jenkinsfilePath = entry.value
 
-        stage('Microservice2') {
-            when {
-                expression {
-                    return env.'MICROSERVICE2_CHANGED' == 'true'
+                        // Only create a stage if the microservice has changes
+                        if (env."${microservice.toUpperCase().replaceAll('-', '_')}_CHANGED" == 'true') {
+                            // Use microservice name as stage name
+                            stages[microservice] = {
+                                stage(microservice) {
+                                    // Read Jenkinsfile contents
+                                    def jenkinsfileContents = readFile(jenkinsfilePath)
+
+                                    // Evaluate the Jenkinsfile
+                                    evaluate(jenkinsfileContents)
+                                }
+                            }
+                        }
+                    }
+
+                    // Run all stages in parallel
+                    if (!stages.isEmpty()) {
+                        parallel stages
+                    }
                 }
-            }
-            steps {
-              script {
-                println "Nothing to do, yet."
-              }
-            }
-        }
-
-        stage('Microservice3') {
-            when {
-                expression {
-                    return env.'MICROSERVICE3_CHANGED' == 'true'
-                }
-            }
-            steps {
-              script {
-                println "Nothing to do, yet."
-              }
             }
         }
     }
