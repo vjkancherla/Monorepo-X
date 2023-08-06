@@ -91,22 +91,24 @@ pipeline {
                         println "${microservice} changed? ${changed}"
                         if (changed == 'true') {
                             println "Creating stage for ${microservice}"
-                            // Use microservice name as stage name
-                            stages[microservice] = {
-                                stage(microservice) {
-                                    // Read Jenkinsfile contents
-                                    def jenkinsfileContents = readFile(jenkinsfilePath)
 
-                                    // Evaluate the Jenkinsfile
-                                    load(jenkinsfileContents)
+                            microserviceStages[microservice] = {
+                                node {
+                                    stage("${microservice}") {
+                                      // Read Jenkinsfile contents
+                                      def jenkinsfileContents = readFile(jenkinsfilePath)
+
+                                      // Evaluate the Jenkinsfile
+                                      evaluate(jenkinsfileContents)
+                                    }
                                 }
                             }
                         }
                     }
 
                     // Run all stages in parallel
-                    if (!stages.isEmpty()) {
-                        parallel stages
+                    if (!microserviceStages.isEmpty()) {
+                        parallel microserviceStages
                     }
                 }
             }
