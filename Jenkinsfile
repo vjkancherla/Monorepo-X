@@ -7,7 +7,7 @@ pipeline {
       GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
       IMAGE_REPO = "vjkancherla/podinfo_application_jenkins"
       IMAGE_TAG = "${GIT_COMMIT_HASH}"
-      BRANCH_NAME = env.GIT_BRANCH
+      BRANCH_NAME = "${env.GIT_BRANCH}"
     }
 
     stages {
