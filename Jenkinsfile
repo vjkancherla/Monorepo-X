@@ -36,7 +36,7 @@ pipeline {
                     if (previousCommitExists) {
                       // Get a list of all changed files
                       changedFiles = sh(
-                          script: "git diff --name-only ${baseBranch} ${BRANCH_NAME}",
+                          script: "git diff --name-only ${baseBranch} remotes/origin/${BRANCH_NAME}",
                           returnStdout: true
                       ).trim().split("\n")
                     }
