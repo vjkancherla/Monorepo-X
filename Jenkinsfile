@@ -87,7 +87,10 @@ pipeline {
                         def jenkinsfilePath = entry.value
 
                         // Only create a stage if the microservice has changes
-                        if (env."${microservice.toUpperCase().replaceAll('-', '_')}_CHANGED" == 'true') {
+                        def changed = env."${microservice.toUpperCase().replaceAll('-', '_')}_CHANGED"
+                        println "${microservice} changed? ${changed}"
+                        if (changed == 'true') {
+                            println "Creating stage for ${microservice}"
                             // Use microservice name as stage name
                             stages[microservice] = {
                                 stage(microservice) {

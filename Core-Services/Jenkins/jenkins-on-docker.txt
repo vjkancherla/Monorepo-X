@@ -49,6 +49,7 @@ vjkancherla/my-jenkins:v1
 
 [3] Login to Jenkins console: https://localhost:8080, and finish setup.
 
+Note: create a admin/admin user credential
 
 [4] Install the Kubernetes plugin in Jenkins
 
