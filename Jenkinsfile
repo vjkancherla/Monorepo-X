@@ -1,94 +1,123 @@
-node {
-    // Environment Variables
-    env.PROJECT = "MonoRepo-Microservices"
-    env.REGISTRY_USER = "vjkancherla"
-    env.GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true).trim()
-    env.IMAGE_REPO = "vjkancherla/podinfo_application_jenkins"
-    env.IMAGE_TAG = "${GIT_COMMIT_HASH}"
+pipeline {
+    agent any
 
-    stage('Detect Changes') {
-        // Change this to be whatever branches you need to compare
-        def branchToCompare = 'origin/main'
-
-        // Initialize a changes map
-        def changes = [
-            'Podinfo-Frontend-App': false,
-            'Python-App': false,
-            'microservice3': false,
-        ]
-
-        // Check if there's a previous commit
-        def previousCommitExists = sh(
-            script: "git rev-parse ${branchToCompare}^",
-            returnStatus: true
-        ) == 0
-
-        def changedFiles
-
-        if (previousCommitExists) {
-          // Get a list of all changed files
-          changedFiles = sh(
-              script: "git diff --name-only ${branchToCompare}^ ${branchToCompare}",
-              returnStdout: true
-          ).trim().split("\n")
-        }
-        else {
-            // If there's no previous commit, consider all files as changed
-            changedFiles = sh(
-                script: "git ls-files",
-                returnStdout: true
-            ).trim().split("\n")
-        }
-
-        // Detect changes in individual microservices
-        for (file in changedFiles) {
-            if (file.startsWith('Microservices/Podinfo-Frontend-App')) {
-                changes.'Podinfo-Frontend-App' = true
-            } else if (file.startsWith('Microservices/Python-App')) {
-                changes.'Python-App' = true
-            } else if (file.startsWith('microservice3')) {
-                changes.'microservice3' = true
-            }
-        }
-
-        // Print changes
-        for (entry in changes) {
-            println "${entry.key} has changes: ${entry.value}"
-        }
-
-        // Set changes in environment variables for later stages
-        for (entry in changes) {
-            env."${entry.key.toUpperCase()}_CHANGED" = "${entry.value}"
-        }
+    environment {
+      PROJECT = "MonoRepo-Microservices"
+      REGISTRY_USER = "vjkancherla"
+      GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+      IMAGE_REPO = "vjkancherla/podinfo_application_jenkins"
+      IMAGE_TAG = "${GIT_COMMIT_HASH}"
     }
 
-    stage('Run Changed Microservices') {
-        def microservices = [
-            'Podinfo-Frontend-App': 'Microservices/Podinfo-Frontend-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy',
-            'Python-App': 'Microservices/Python-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy',
-            'microservice3': 'microservice3/jenkinsfiles/pre-merge/Jenkinsfile.groovy',
-        ]
+    stages {
+        stage('Detect Changes') {
+            steps {
+                script {
+                    // Change this to be whatever branches you need to compare
+                    def branchToCompare = 'origin/main'
 
-        def buildStages = [:]
-        for (entry in microservices) {
-            def microservice = entry.key
-            def jenkinsfilePath = entry.value
+                    // Initialize a changes map
+                    def changes = [
+                        'Podinfo-Frontend-App': false,
+                        'Python-App': false,
+                        'microservice3': false,
+                    ]
 
-            def changed = env."${microservice.toUpperCase()}_CHANGED"
+                    // Check if there's a previous commit
+                    def previousCommitExists = sh(
+                        script: "git rev-parse ${branchToCompare}^",
+                        returnStatus: true
+                    ) == 0
 
-            if (changed == 'true') {
-                buildStages[microservice] = {
-                    node {
-                        stage("${microservice}") {
-                            load("${jenkinsfilePath}")
+                    if (previousCommitExists) {
+                      // Get a list of all changed files
+                      changedFiles = sh(
+                          script: "git diff --name-only ${branchToCompare}^ ${branchToCompare}",
+                          returnStdout: true
+                      ).trim().split("\n")
+                    }
+                    else {
+                        // If there's no previous commit, consider all files as changed
+                        changedFiles = sh(
+                            script: "git ls-files",
+                            returnStdout: true
+                        ).trim().split("\n")
+                    }
+
+                    // Detect changes in individual microservices
+                    for (file in changedFiles) {
+                        if (file.startsWith('Microservices/Podinfo-Frontend-App')) {
+                            changes.'Podinfo-Frontend-App' = true
+                        } else if (file.startsWith('Microservices/Python-App')) {
+                            changes.'Python-App' = true
+                        } else if (file.startsWith('microservice3')) {
+                            changes.'microservice3' = true
                         }
+                    }
+
+                    // Print changes
+                    for (entry in changes) {
+                        println "${entry.key} has changes: ${entry.value}"
+                    }
+
+                    // Set changes in environment variables for later stages
+                    for (entry in changes) {
+                        env."${entry.key.toUpperCase()}_CHANGED" = "${entry.value}"
                     }
                 }
             }
         }
 
-        if (!buildStages.isEmpty()) {
-            parallel buildStages
+        // Use changes in your build/test stages
+        stage('Podinfo-Frontend-App') {
+            when {
+                expression {
+                    return env.'PODINFO-FRONTEND-APP_CHANGED'== 'true'
+                }
+            }
+            steps {
+              script {
+                  def jenkinsfilePath = 'Microservices/Podinfo-Frontend-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy'
+
+                  // Read Jenkinsfile contents
+                  def jenkinsfileContents = readFile(jenkinsfilePath)
+
+                  // Evaluate the Jenkinsfile
+                 evaluate(jenkinsfileContents)
+              }
+            }
+        }
+
+        stage('Python-App') {
+            when {
+                expression {
+                    return env.'PYTHON-APP_CHANGED' == 'true'
+                }
+            }
+            steps {
+              script {
+                  def jenkinsfilePath = 'Microservices/Python-App/jenkinsfiles/pre-merge/Jenkinsfile.groovy'
+
+                  // Read Jenkinsfile contents
+                  def jenkinsfileContents = readFile(jenkinsfilePath)
+
+                  // Evaluate the Jenkinsfile
+                 evaluate(jenkinsfileContents)
+              }
+            }
+        }
+
+        stage('Microservice3') {
+            when {
+                expression {
+                    return env.'MICROSERVICE3_CHANGED' == 'true'
+                }
+            }
+            steps {
+              script {
+                println "Nothing to do, yet."
+              }
+            }
         }
     }
 }
