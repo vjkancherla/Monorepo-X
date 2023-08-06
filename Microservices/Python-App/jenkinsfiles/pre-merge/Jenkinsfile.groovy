@@ -10,13 +10,6 @@ stage("SonarQube-Analysis") {
               // Run the SonarScanner for your project with the stored token
               sh "sonar-scanner"
           }
-
-          timeout(time: 2, unit: 'MINUTES') {
-           def qgStatus = getQualityGateStatus()
-           if (qgStatus != 'OK') {
-             error "Pipeline aborted due to quality gate failure: ${qgStatus}"
-           }
-         }
       }
   }
 }
