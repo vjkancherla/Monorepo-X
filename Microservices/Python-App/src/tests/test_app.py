@@ -1,6 +1,6 @@
 import unittest
 import os
-from src.app.app import create_server, run_server
+from app.app import create_server, run_server
 from unittest.mock import patch, Mock
 from http.server import HTTPServer
 from requests import get
