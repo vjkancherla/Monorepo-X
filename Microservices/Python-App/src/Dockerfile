@@ -10,7 +10,7 @@ RUN mkdir /app
 RUN adduser -D appuser
 USER appuser
 
-ADD ./python-app-src /app
+ADD ./app /app
 
 WORKDIR /app
 
