@@ -23,7 +23,7 @@ class TestMyHandler(unittest.TestCase):
     def test_handler(self, mock_getenv):
         mock_getenv.side_effect = ['dev', '1.0', 'test message']
 
-        response = get('http://localhost:8080')
+        response = get('http://localhost:8888')
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('Environment: dev', response.text)
