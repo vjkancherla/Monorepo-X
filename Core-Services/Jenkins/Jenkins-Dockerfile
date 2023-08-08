@@ -11,7 +11,7 @@ RUN apt-get update && \
     apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sudo python3 python3-pip # Added sudo, python3 and python3-pip here
 
 # Install coverage.py
-RUN pip3 install coverage
+RUN pip3 install requests coverage
 
 # Install OpenJDK
 RUN apt-get install -y openjdk-11-jdk
