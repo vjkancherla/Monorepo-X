@@ -8,7 +8,7 @@ from requests import get
 
 class TestMyHandler(unittest.TestCase):
     def setUp(self):
-        self.server_address = ('', 8080)
+        self.server_address = ('', 8888)
         self.httpd = HTTPServer(self.server_address, app.MyHandler)
         self.server_thread = threading.Thread(target=self.httpd.serve_forever)
         self.server_thread.setDaemon(True)
