@@ -1,9 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 
-environment   = os.getenv('ENVIRONMENT')
-image_version = os.getenv('IMAGE_VERSION')
-message       = os.getenv('MESSAGE')
+environment   = os.getenv('ENVIRONMENT', 'Unknown')   # Default to 'Unknown' if not set
+image_version = os.getenv('IMAGE_VERSION', 'Unknown') # Default to 'Unknown' if not set
+message       = os.getenv('MESSAGE', 'Unknown')       # Default to 'Unknown' if not set
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -23,7 +23,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
 Hello from Docker!
 ''')
-        self.wfile.write(bytes('Environment: '+environment+', Image_version: '+image_version+', Custom_Message: '+message, encoding='utf8'))
+        self.wfile.write(bytes('Environment: ' + environment + ', Image_version: ' + image_version + ', Custom_Message: ' + message, encoding='utf8'))
 
 def run():
     print('Starting server...')
