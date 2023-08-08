@@ -7,22 +7,22 @@ from requests import get
 import threading
 
 class TestMyHandler(unittest.TestCase):
-    def setUp(self):
-        self.server_address = ('', 8888)
-        self.httpd = create_server()
-        self.server_thread = threading.Thread(target=self.httpd.serve_forever)
-        self.server_thread.setDaemon(True)
-        self.server_thread.start()
-
-    def tearDown(self):
-        self.httpd.shutdown()
-        self.server_thread.join()
 
     @patch('os.getenv')
     def test_handler(self, mock_getenv):
         mock_getenv.side_effect = ['dev', '1.0', 'test message']
 
+        server_address = ('', 8888)
+        httpd = create_server()
+
+        server_thread = threading.Thread(target=httpd.serve_forever)
+        server_thread.setDaemon(True)
+        server_thread.start()
+
         response = get('http://localhost:8888')
+
+        httpd.shutdown()
+        server_thread.join()
 
         self.assertEqual(response.status_code, 200)
         self.assertIn('Environment: dev', response.text)
