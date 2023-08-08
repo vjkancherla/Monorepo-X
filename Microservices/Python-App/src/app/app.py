@@ -25,12 +25,18 @@ Hello from Docker!
 ''')
         self.wfile.write(bytes('Environment: ' + environment + ', Image_version: ' + image_version + ', Custom_Message: ' + message, encoding='utf8'))
 
-def run():
-    print('Starting server...')
+def create_server():
+    print('Setting up server...')
     server_address = ('', 8888)
-    httpd = HTTPServer(server_address, MyHandler)
+    return HTTPServer(server_address, MyHandler)
+
+def run_server(httpd):
     print('Server started!')
     httpd.serve_forever()
+
+def run():
+    httpd = create_server()
+    run_server(httpd)
 
 if __name__ == '__main__':
     run()
