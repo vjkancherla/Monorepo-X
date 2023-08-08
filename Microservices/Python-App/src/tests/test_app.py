@@ -4,6 +4,7 @@ from app import app
 from unittest.mock import patch
 from http.server import HTTPServer
 from requests import get
+import threading
 
 
 class TestMyHandler(unittest.TestCase):
