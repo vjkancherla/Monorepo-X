@@ -1,6 +1,6 @@
 import unittest
 import os
-import app
+from app import app
 from unittest.mock import patch
 from http.server import HTTPServer
 from requests import get
