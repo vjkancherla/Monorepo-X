@@ -123,6 +123,8 @@ yellow=$(tput setaf 3) # Yellow text color
 reset=$(tput sgr0)     # Reset text color
 
 # Print the instructions in highlighted color
+echo ""
+echo ""
 echo "${green}Instructions:${reset}"
 echo "${yellow}1. Create/Update Jenkins Global Credential as follows:${reset}"
 echo "${yellow}   Type: secret file${reset}"

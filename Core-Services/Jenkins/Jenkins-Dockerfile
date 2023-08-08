@@ -1,4 +1,4 @@
-#Custom Jenkins Image with Kubectl, Helm, Docker-clientt and SonarScanner tools installed.
+#Custom Jenkins Image with Kubectl, Helm, Docker-client, Coverage and SonarScanner tools installed.
 #This image will be used to run Jenkins on Docker.
 
 FROM --platform=linux/amd64 jenkins/jenkins:lts
@@ -8,7 +8,10 @@ USER root
 # Install prerequisites
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sudo # Added sudo here
+    apt-get install -y apt-transport-https ca-certificates curl gnupg2 software-properties-common sudo python3 python3-pip # Added sudo, python3 and python3-pip here
+
+# Install coverage.py
+RUN pip3 install requests coverage
 
 # Install OpenJDK
 RUN apt-get install -y openjdk-11-jdk
@@ -30,10 +33,12 @@ RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/s
     chmod +x kubectl && \
     mv kubectl /usr/local/bin/
 
-# Install helm
-RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
-    chmod 700 get_helm.sh && \
-    ./get_helm.sh
+# Install Helm
+RUN curl -fsSL -o helm.tar.gz https://get.helm.sh/helm-v3.7.1-linux-amd64.tar.gz && \
+    tar -zxvf helm.tar.gz && \
+    mv linux-amd64/helm /usr/local/bin/helm && \
+    rm -rf linux-amd64 && \
+    rm helm.tar.gz
 
 # Install SonarScanner (ARM64 version)
 RUN curl -L -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip && \
