@@ -22,6 +22,7 @@ class TestMyHandler(unittest.TestCase):
         response = get('http://localhost:8888')
 
         httpd.shutdown()
+        httpd.server_close()  # Explicitly close the server socket
         server_thread.join()
 
         self.assertEqual(response.status_code, 200)
