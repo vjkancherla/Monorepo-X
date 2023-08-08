@@ -27,7 +27,7 @@ Hello from Docker!
 
 def run():
     print('Starting server...')
-    server_address = ('', 8080)
+    server_address = ('', 8888)
     httpd = HTTPServer(server_address, MyHandler)
     print('Server started!')
     httpd.serve_forever()
