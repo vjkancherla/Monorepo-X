@@ -1,9 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 
-environment   = os.getenv('ENVIRONMENT', 'Unknown')   # Default to 'Unknown' if not set
-image_version = os.getenv('IMAGE_VERSION', 'Unknown') # Default to 'Unknown' if not set
-message       = os.getenv('MESSAGE', 'Unknown')       # Default to 'Unknown' if not set
+environment   = os.getenv('ENVIRONMENT', 'dev')   # Default to 'dev' if not set
+image_version = os.getenv('IMAGE_VERSION', '1.0') # Default to '1.0' if not set
+message       = os.getenv('MESSAGE', 'test message')       # Default to 'test message' if not set
 
 class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
