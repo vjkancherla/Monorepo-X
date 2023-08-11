@@ -3,7 +3,7 @@ def getImageRepo() {
 }
 
 def getFullImageTag() {
-    return "${env.REGISTRY_USER}/python_app_jenkins:${env.IMAGE_TAG}"
+    return "${getImageRepo()}:${env.GIT_COMMIT_HASH}"
 }
 
 stage("SonarQube-Analysis") {
@@ -57,7 +57,7 @@ stage('Deploy App to K3D Dev') {
             helm upgrade --install helm-py-app-dev -n dev --create-namespace \
             --values namespaces/dev/values.yaml \
             --set image.repository=${getImageRepo()} \
-            --set image.tag=${env.IMAGE_TAG} \
+            --set image.tag=${env.GIT_COMMIT_HASH} \
             .
           """
         }
