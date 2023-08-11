@@ -1,5 +1,5 @@
 def getImageRepo() {
-  return "${env.REGISTRY_USER}/python_app_jenkins}"
+  return "${env.REGISTRY_USER}/python_app_jenkins"
 }
 
 def getFullImageTag() {
