@@ -34,11 +34,10 @@ stage("Push-Image-To-DockerHub") {
   IMAGE_REPO = "${env.REGISTRY_USER}/python_app_jenkins"
   script {
     withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-        sh '''
+        sh """
             echo ${DOCKER_PASSWORD} | sudo docker login -u ${DOCKER_USERNAME} --password-stdin
-            echo "docker push ${IMAGE_REPO}:${env.IMAGE_TAG}"
             sudo docker push ${IMAGE_REPO}:${env.IMAGE_TAG}
-        '''
+        """
     }
   }
 }
