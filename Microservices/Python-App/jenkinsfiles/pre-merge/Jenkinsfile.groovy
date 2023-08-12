@@ -3,7 +3,7 @@ def getImageRepo() {
 }
 
 def getFullImageTag() {
-    return "${env.REGISTRY_USER}/python_app_jenkins:${env.IMAGE_TAG}"
+    return "${getImageRepo()}:${env.GIT_COMMIT_HASH}"
 }
 
 stage("SonarQube-Analysis") {
@@ -57,7 +57,7 @@ stage('Deploy App to K3D Dev') {
             helm upgrade --install helm-py-app-dev -n dev --create-namespace \
             --values namespaces/dev/values.yaml \
             --set image.repository=${getImageRepo()} \
-            --set image.tag=${env.IMAGE_TAG} \
+            --set image.tag=${env.GIT_COMMIT_HASH} \
             .
           """
         }
@@ -71,9 +71,11 @@ stage('Test App in K3D Dev') {
       sh script: '''
           export KUBECONFIG=${KUBECONFIG}
 
+          deployment_name=$(kubectl get deployment -n dev -o jsonpath='{.items[].metadata.name}' | tr ' ' '\n' | grep "py-app")
+
           i=1
           while [ "$i" -le 30 ]; do
-              if kubectl rollout status deployment/helm-py-app-dev -n dev; then
+              if kubectl rollout status deployment/${deployment_name} -n dev; then
                   echo "Deployment is ready!"
                   break
               elif [ "$i" -eq 30 ]; then
@@ -82,8 +84,8 @@ stage('Test App in K3D Dev') {
                   exit 1
               else
                   echo "Waiting for Deployment to become ready..."
-                  sleep 1
-                  i=$((i+1))
+                  sleep 5
+                  i=$((i+5))
               fi
           done
 
