@@ -68,7 +68,7 @@ stage('Deploy App to K3D Dev') {
 stage('Test App in K3D Dev') {
   script {
     withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
-      sh script: """
+      sh script: '''
           export KUBECONFIG=${KUBECONFIG}
 
           deployment_name=$(kubectl get deployment -n dev -o jsonpath='{.items[].metadata.name}' | tr ' ' '\n' | grep "py-app")
@@ -90,9 +90,8 @@ stage('Test App in K3D Dev') {
           done
 
           service_name=$(kubectl get service -n dev -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep "py-app")
-
           kubectl run -n dev curl --image=curlimages/curl -i --rm --restart=Never -- curl http://${service_name}:80
-      """
+      '''
     }
   }
 }
