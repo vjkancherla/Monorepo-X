@@ -71,12 +71,14 @@ stage('Deploy App to K3D Dev') {
 stage('Test App in K3D Dev') {
   script {
       withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
-          sh script: '''
+          sh script: """
               export KUBECONFIG=${KUBECONFIG}
+
+              deployment_name=$(kubectl get deployment -n dev -o jsonpath='{.items[].metadata.name}' | tr ' ' '\n' | grep "frontend-podinfo")
 
               i=1
               while [ "$i" -le 30 ]; do
-                  if kubectl rollout status deployment/helm-pi-fe-dev -n dev; then
+                  if kubectl rollout status deployment/${deployment_name} -n dev; then
                       echo "Deployment is ready!"
                       break
                   elif [ "$i" -eq 30 ]; then
@@ -85,14 +87,15 @@ stage('Test App in K3D Dev') {
                       exit 1
                   else
                       echo "Waiting for Deployment to become ready..."
-                      sleep 1
-                      i=$((i+1))
+                      sleep 5
+                      i=$((i+5))
                   fi
               done
 
               service_name=$(kubectl get service -n dev -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep "podinfo")
+
               kubectl run -n dev curl --image=curlimages/curl -i --rm --restart=Never -- curl http://${service_name}:9898
-          '''
+          """
       }
   }
 }
