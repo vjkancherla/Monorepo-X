@@ -6,7 +6,7 @@ def getFullImageTag() {
     return "${getImageRepo()}:${env.GIT_COMMIT_HASH}"
 }
 
-stage("SonarQube-Analysis") {
+stage("SonarQube Analysis") {
     dir('Microservices/Python-App/src') {
         script {
             withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
@@ -28,7 +28,7 @@ stage("SonarQube-Analysis") {
     }
 }
 
-stage("Package-Image") {
+stage("Package Image") {
   dir('Microservices/Python-App/src')
   {
     script {
@@ -37,13 +37,24 @@ stage("Package-Image") {
   }
 }
 
-stage("Push-Image-To-DockerHub") {
+stage("Push Image To DockerHub") {
   script {
     withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
         sh """
             echo ${DOCKER_PASSWORD} | sudo docker login -u ${DOCKER_USERNAME} --password-stdin
             sudo docker push ${getFullImageTag()}
         """
+    }
+  }
+}
+
+stage("Validate Helm Charts with Datree") {
+  dir('Microservices/Python-App/helm-chart') {
+    withCredentials([string(credentialsId: 'datree-token', variable: 'token')]) {
+      sh """
+        export DATREE_TOKEN=${token}
+        helm datree test .
+      """
     }
   }
 }
