@@ -74,7 +74,7 @@ stage('Test App in K3D Dev') {
           sh script: '''
               export KUBECONFIG=${KUBECONFIG}
 
-              deployment_name=$(kubectl get deployment -n dev -o jsonpath='{.items[].metadata.name}' | tr ' ' '\n' | grep "frontend-podinfo")
+              deployment_name=$(kubectl get deployment -n dev -o jsonpath='{.items[*].metadata.name}' | tr ' ' '\n' | grep "frontend-podinfo")
 
               i=1
               while [ "$i" -le 30 ]; do
