@@ -1,0 +1,16 @@
+genrule(
+    name = "foo",
+    outs = ["foo.txt"],
+    cmd_bash = "sleep 5 && echo 'Hello World!!' >$@",
+)
+
+py_binary(
+    name = "app",
+    srcs = ["app/app.py"],
+)
+
+py_test(
+    name = "test_app",
+    srcs = ["tests/test_app.py"],
+    deps = [":app"],
+)

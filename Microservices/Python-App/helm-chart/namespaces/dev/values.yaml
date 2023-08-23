@@ -1,3 +1,5 @@
 environment: dev
 
 custom_message: Feature-X1
+
+replicaCount: 1
