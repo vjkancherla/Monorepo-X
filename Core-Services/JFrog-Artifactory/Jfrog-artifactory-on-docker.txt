@@ -1,0 +1,47 @@
+We will install and run JFrog Artifactory on docker
+==========
+
+[1] Install and run JFrog Artifactory
+
+Note that we need to have Jenkins and JFrog running on the SAME docker network so that they can communicate.
+This means that Jenkins, JFrog, Sonarqube and K3D will be on tha name network.
+
+>> docker run -d --name jfrog-artifactory \
+-p 8081:8081 -p 8082:8082 \
+-v /Users/vijaykancherla/Downloads/jfrog-artifactory-volume:/var/opt/jfrog/artifactory \
+--network=k3d-mycluster \
+docker.bintray.io/jfrog/artifactory-oss:latest
+
+LOGS
+>> docker logs -f jfrog-artifactory
+
+STOP 
+>> docker stop jfrog-artifactory && docker rm jfrog-artifactory
+
+
+[2] Login to the console using - http://localhost:8082/ui/
+Default creds : admin / password
+
+Change password to: Jfroguser1
+
+
+[3] Create a new Project and Repository
+
+Create a new Project called - My-New-Project. Use Project Key - my-project-key-12345
+
+In "My-New-Project" create a new Local Repository
+Type: Generic
+Repo Key: my-project-key-12345-6
+
+
+[4] Test publishing a chart to Jfrog 
+>> cd Monorepo-X/Microservices/Python-App/helm-chart
+>> helm package .
+>> curl -u admin:Jfroguser1 -T python-app-chart-0.1.0.tgz http://localhost:8081/artifactory/my-project-key-12345-6/
+
+In JFrog console, in the left-hand-menu go to 
+Application >> Artifactory >> Artifacts
+Then, click on my-project-key-12345-6. You should see the package uploaded here.
+
+[5] Download the chart from JFrog
+curl -u admin:Jfroguser1 -O http://localhost:8081/artifactory/my-project-key-12345-6/python-app-chart-0.1.0.tgz
