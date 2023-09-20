@@ -48,6 +48,17 @@ stage("Push-Image-To-DockerHub") {
   }
 }
 
+// stage("Validate Helm Charts with Datree") {
+//   dir('Microservices/Python-App/helm-chart') {
+//     withCredentials([string(credentialsId: 'datree-token', variable: 'token')]) {
+//       sh """
+//         export DATREE_TOKEN=${token}
+//         helm datree test .
+//       """
+//     }
+//   }
+// }
+
 stage('Deploy App to K3D Dev') {
   dir('Microservices/Python-App/helm-chart') {
       script {
