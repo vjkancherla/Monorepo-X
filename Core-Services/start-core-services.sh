@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Automatically identify the username
+username=$(whoami)
+
 # Function to print and highlight the current step
 function print_step {
   local step_name=$1
@@ -82,7 +85,7 @@ echo "K3D server IP address: $k3d_mycluster_server_ip"
 print_step "Start Jenkins in detached mode"
 docker run -d --name jenkins-docker \
 -p 8080:8080 -p 50000:50000 \
--v /Users/vkancherla/Downloads/jenkins-volume:/var/jenkins_home \
+-v /Users/${username}/Downloads/jenkins-volume:/var/jenkins_home \
 -v /var/run/docker.sock:/var/run/docker.sock \
 --network=k3d-mycluster \
 vjkancherla/my-jenkins:v1
@@ -91,7 +94,7 @@ vjkancherla/my-jenkins:v1
 print_step "Start SonarQube in detached mode"
 docker run -d --name sonarqube \
 -p 9000:9000 -p 9092:9092 \
--v /Users/vkancherla/Downloads/sonarqube-volume:/opt/sonarqube/data \
+-v /Users/${username}/Downloads/sonarqube-volume:/opt/sonarqube/data \
 --network=k3d-mycluster \
 sonarqube:lts-community
 

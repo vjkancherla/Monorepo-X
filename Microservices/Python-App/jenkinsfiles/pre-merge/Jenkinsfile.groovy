@@ -48,6 +48,17 @@ stage("Push-Image-To-DockerHub") {
   }
 }
 
+// stage("Validate Helm Charts with Datree") {
+//   dir('Microservices/Python-App/helm-chart') {
+//     withCredentials([string(credentialsId: 'datree-token', variable: 'token')]) {
+//       sh """
+//         export DATREE_TOKEN=${token}
+//         helm datree test .
+//       """
+//     }
+//   }
+// }
+
 stage('Deploy App to K3D Dev') {
   dir('Microservices/Python-App/helm-chart') {
       script {
@@ -101,9 +112,9 @@ stage('Test App in K3D Dev') {
 stage('[Optional] Delete K3D Dev Helm Release') {
   script {
     try {
-      timeout(time: 30, unit: 'SECONDS') {
-        input message: 'Do you want to delete the helm release?', ok: 'Yes'
-      }
+      // timeout(time: 30, unit: 'SECONDS') {
+      //   input message: 'Do you want to delete the helm release?', ok: 'Yes'
+      // }
       withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
         sh """
           export KUBECONFIG=${KUBECONFIG}
@@ -111,7 +122,10 @@ stage('[Optional] Delete K3D Dev Helm Release') {
         """
       }
     } catch (Exception e) {
-      echo 'User did not respond within 30 seconds. Proceeding with default behavior.'
+      // echo 'User did not respond within 30 seconds. Proceeding with default behavior.'
+      println "Exception Message: ${e.getMessage()}"
+      // Fail the pipeline
+      error("Pipeline failed due to an exception")
     }
   }
 }

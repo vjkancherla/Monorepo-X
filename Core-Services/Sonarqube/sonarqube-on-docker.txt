@@ -62,9 +62,9 @@ d. generate token and save the token
 [4.1] Go to "Manage Jenkins" > "Configure System".
 Now, you should see the "SonarQube Servers" section.
 Click on "Add SonarQube" to add a SonarQube server configuration.
-Provide a name for the server (e.g., "SonarQube Server").
+Provide a name for the server - "SonarQube-on-Docker"
 Enter the URL of your SonarQube server (e.g., http://localhost:9000). Set it to - http://172.20.0.7:9000
-If your SonarQube server requires authentication, you can enter the authentication token or credentials.
+Server authentication token: Select the credential created in step-2
 
 [5] At the root of your source code directory, define a file called sonar-project.properties with the following values:
 sonar.projectKey=project-key-12345

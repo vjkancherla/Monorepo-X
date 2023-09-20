@@ -56,8 +56,9 @@ Note: create a admin/admin user credential
 
 [5] To connect Jenkins to K3D, we will need the kubeconfig file that K3D generates for us. However, we will need to update it a bit.
 
+Option-1
 On the MacBook,
->> cp ~/.kube/config ~/Documents/Clients/my_ci_cd/k3d-config
+>> cp ~/.kube/config ~/Documents/Clients/my_ci_cd/k3d-kubeconfig
 
 >> docker ps | grep k3d-mycluster-server-0
 
@@ -71,9 +72,13 @@ Update ~/Documents/Clients/my_ci_cd/k3d-config and set K3D API-Server URL as :
     server: https://172.19.0.3:6443 <=====
   name: k3d-mycluster
 
+Option-2
+cp ~/.kube/config k3d-kubeconfig
+k3d_mycluster_server_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' k3d-mycluster-server-0)
+sed -i '' "s|server: .*|server: https://$k3d_mycluster_server_ip:6443|g" k3d-kubeconfig
 
-[6] In Jenkins, create a new Credential, of type "secret file", and use ~/Documents/Clients/my_ci_cd/k3d-config
 
+[6] In Jenkins, create a new Credential, of type "secret file", called "k3d-config", and use ~/Documents/Clients/my_ci_cd/k3d-kubeconfig
 
 [7] Configure Kubernetes Cloud using the kubeconfig file
 
