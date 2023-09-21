@@ -2,15 +2,26 @@
 
 def initialize() {
     def jobName = env.JOB_NAME
-    def jobBaseName = env.JOB_BASE_NAME
 
-    println ("jobName: "+jobName+", jobBaseName: "+JOB_BASE_NAME)
-    
-    if (jobName == "Monorepo-X-PR-CI") {
-        ci-pr()
-    }
-    else if (jobName == "Monorepo-X-Main-CI") {
-        ci-main()
+    println ("jobName: "+jobName)
+
+    def jobNameParts = jobName.split('/')
+
+    if (jobNameParts.size() == 2) {
+        def pipelineName = jobNameParts[0]
+        def branchOrPR = jobNameParts[1]
+
+        if (pipelineName == "Monorepo-X-PR-CI") {
+            println ("Running CI for PR: "+branchOrPR)
+            continuousIntegrationPR()
+        } 
+        else if (pipelineName == "Monorepo-X-Main-CI") {
+            println ("Running CI for Main branch")
+            continuousIntegrationMain()
+        }
+    } 
+    else {
+        println("Unsupported jobName format")
     }
 }
 
