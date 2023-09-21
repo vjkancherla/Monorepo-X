@@ -1,4 +1,4 @@
-@Library(['Core-Services/Jenkins/JenkinsSharedLibrary']) _
+@Library(['my-shared-library'])
 
 def initialize() {
     def jobName = env.JOB_NAME
