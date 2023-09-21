@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Lint Code') {
+            steps {
+                dir('Microservices/Podinfo-Frontend-App') {
+                    // Run linting commands for Podinfo-Frontend-App
+                    sh 'lint_command_here'
+                }
+                dir('Microservices/Python-App') {
+                    // Run linting commands for Python-App
+                    sh 'lint_command_here'
+                }
+            }
+        }
+
+        stage('Compile and Build Code') {
+            steps {
+                dir('Microservices/Podinfo-Frontend-App') {
+                    // Run compile and build commands for Podinfo-Frontend-App
+                    sh 'build_command_here'
+                }
+                dir('Microservices/Python-App') {
+                    // Run compile and build commands for Python-App
+                    sh 'build_command_here'
+                }
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                dir('Microservices/Podinfo-Frontend-App') {
+                    // Run unit tests for Podinfo-Frontend-App
+                    sh 'unit_test_command_here'
+                }
+                dir('Microservices/Python-App') {
+                    // Run unit tests for Python-App
+                    sh 'unit_test_command_here'
+                }
+            }
+        }
+    }
+}
