@@ -1,0 +1,17 @@
+@Library(['my-shared-library'])
+
+def initialize() {
+    def jobName = env.JOB_NAME
+    def jobBaseName = env.JOB_BASE_NAME
+
+    println ("jobName: "+jobName+", jobBaseName: "+JOB_BASE_NAME)
+    
+    if (jobName == "Monorepo-X-PR-CI") {
+        ci-pr()
+    }
+    else if (jobName == "Monorepo-X-Main-CI") {
+        ci-main()
+    }
+}
+
+initialize()
