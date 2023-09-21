@@ -34,12 +34,20 @@ verify_command_success "Stopped Jenkins container."
 docker rm jenkins-docker
 verify_command_success "Removed Jenkins container."
 
-# Step 3: Delete K3D cluster
+# Step 3: Stop and remove the JFrog Artifactory container
+print_step "Stop and remove the JFrog Artifactory container"
+docker stop jfrog-artifactory
+verify_command_success "Stopped JFrog Artifactory container."
+
+docker rm jfrog-artifactory
+verify_command_success "Removed JFrog Artifactory container."
+
+# Step 4: Delete K3D cluster
 print_step "Delete K3D cluster"
 k3d cluster delete mycluster
 verify_command_success "Deleted K3D cluster 'mycluster'."
 
-# Step 4: Verify K3D cluster deletion completion
+# Step 5: Verify K3D cluster deletion completion
 print_step "Verify K3D cluster deletion completion"
 cluster_deleted=false
 max_attempts=30
@@ -62,11 +70,11 @@ if [[ $cluster_deleted == false ]]; then
   exit 1
 fi
 
-# Step 5: Stop Docker Desktop
+# Step 6 Stop Docker Desktop
 print_step "Stop Docker Desktop"
 osascript -e 'quit app "Docker"'
 
-# Step 6: Verify Docker Desktop has stopped
+# Step 7: Verify Docker Desktop has stopped
 print_step "Verify Docker Desktop has stopped"
 echo "Verifying Docker Desktop..."
 if [[ $(pgrep Docker) == "" ]]; then
