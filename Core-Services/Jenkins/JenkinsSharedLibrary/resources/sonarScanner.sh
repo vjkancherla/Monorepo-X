@@ -45,8 +45,8 @@ run_go_sonarqube_analysis() {
     cd -  # Return to the previous directory
 }
 
-# Run unit tests for both Python and Go code
-run_python_tests
-run_go_tests
+# Run the scan
+run_python_sonarqube_analysis
+run_go_sonarqube_analysis
 
 exit $EXIT_CODE
