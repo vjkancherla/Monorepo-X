@@ -9,13 +9,13 @@ run_python_sonarqube_analysis() {
     echo "Running SonarQube analysis for Python code in directory: $python_dir"
     cd "$python_dir" || exit 1  # Change to the Python directory; exit on failure
     
-    // Run unit tests with coverage tool
+    # Run unit tests with coverage tool
     coverage run -m unittest discover tests
                 
-    // Generate the XML report
+    # Generate the XML report
     coverage xml
 
-    // Run the SonarScanner for your project with the stored token
+    # Run the SonarScanner for your project with the stored token
     sonar-scanner
 
     # Capture the exit code of the SonarScanner command and update the overall exit code
@@ -33,7 +33,7 @@ run_go_sonarqube_analysis() {
     echo "Running SonarQube analysis for Go code in directory: $go_dir"
     cd "$go_dir" || exit 1  # Change to the Go directory; exit on failure
     
-    // Run the SonarScanner for your project with the stored token
+    # Run the SonarScanner for your project with the stored token
     sonar-scanner
 
     # Capture the exit code of the SonarScanner command and update the overall exit code
