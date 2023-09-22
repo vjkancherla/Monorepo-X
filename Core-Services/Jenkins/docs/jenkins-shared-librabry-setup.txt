@@ -1,0 +1,43 @@
+
+============================
+Shared Libraries Location
+============================
+
+MonoRepo-X/Core-Services/Jenkins/JenkinsSharedLibrary
+├── resources
+│   └── lint.sh
+└── vars
+    ├── continuousIntegrationMain.groovy
+    └── continuousIntegrationPR.groovy
+
+
+====================================
+Shared Libraries Setup in Console
+====================================
+
+Jenkins-Console >> Manage Jenkins >> System
+
+Configure a new library under "Global Pipeline Libraries" as follows:
+Name : my-shared-library
+Default Version: <Name of the branch> ("main" or "New-CI-WorkFlow" (name of the branch you are working on) )
+Select:
+    - Allow default version to be overridden
+    - include @Library changes in job recent changes
+Retrieval method:
+    - Modern SCM
+        - Git
+        - Project Repo: https://github.com/vjkancherla/Monorepo-X
+    - Behaviors
+        - Discover branches
+Library Path: Core-Services/Jenkins/JenkinsSharedLibrary/
+
+
+=========================
+Invoking Shared Library
+==========================
+
+In JenkinsFile.CI, add @Library(['my-shared-library']) as the fist line
+
+Invoke a Shared Library by writing 
+    - continuousIntegrationMain()
+    - continuousIntegrationPR
