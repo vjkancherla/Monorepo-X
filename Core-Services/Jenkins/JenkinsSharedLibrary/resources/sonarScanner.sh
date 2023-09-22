@@ -8,6 +8,8 @@ run_python_sonarqube_analysis() {
     local python_dir="Microservices/Python-App/src"
     echo "Running SonarQube analysis for Python code in directory: $python_dir"
     cd "$python_dir" || exit 1  # Change to the Python directory; exit on failure
+
+    set
     
     # Run unit tests with coverage tool
     coverage run -m unittest discover tests
