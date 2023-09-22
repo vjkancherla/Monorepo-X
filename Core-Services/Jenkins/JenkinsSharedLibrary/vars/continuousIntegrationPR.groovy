@@ -6,13 +6,7 @@ def call() {
             
             stage('Lint Code') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Lint Go Code"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Lint Python Code"
-                    }
+                    sh(libraryResource('lint.sh'))
                 }
             }
 
