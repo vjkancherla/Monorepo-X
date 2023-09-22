@@ -24,14 +24,26 @@ def call() {
 
             stage('Static Code Analysis') {
                 steps {
-                    withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
-                        sh(libraryResource('sonarScanner.sh'))
-                    }
+                    script {
+                        def sonarEnvVars
 
-                    timeout(time: 2, unit: 'MINUTES') {
-                        def qg = waitForQualityGate()
-                        if (qg.status != 'OK') {
-                            error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                        withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
+                            sonarEnvVars = env
+                        }
+
+                        // Export the captured environment variables for use in the shell script
+                        env.PATH += ":${sonarEnvVars.PATH}"
+                        env.SONAR_USER_HOME = sonarEnvVars.SONAR_USER_HOME
+                        env.SONAR_SCANNER_OPTS = sonarEnvVars.SONAR_SCANNER_OPTS
+                        env.SONARQUBE_SCANNER_PARAMS = sonarEnvVars.SONARQUBE_SCANNER_PARAMS
+
+                        sh(libraryResource('sonarScanner.sh'))
+                        
+                        timeout(time: 2, unit: 'MINUTES') {
+                            def qg = waitForQualityGate()
+                            if (qg.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+                            }
                         }
                     }
                 }                  
