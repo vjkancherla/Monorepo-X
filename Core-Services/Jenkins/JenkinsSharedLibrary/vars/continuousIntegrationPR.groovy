@@ -1,3 +1,6 @@
+def PYTHON_IMAGE_TAG = ""
+def Go_IMAGE_TAG = ""
+
 def call() {
     pipeline {
         agent any
