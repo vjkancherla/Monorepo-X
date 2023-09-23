@@ -1,14 +1,8 @@
 #!/bin/bash
 
-# Check if the required parameters are provided
-if [ "$#" -ne 2 ]; then
-    echo "Usage: $0 <python_image_tag> <go_image_tag>"
-    exit 1
-fi
-
-# Assign the parameters to variables
-python_image_tag="$1"
-go_image_tag="$2"
+# Assign variables from ENV VARS
+python_image_tag="${PY_IMAGE_TAG}"
+go_image_tag="${GOO_IMAGE_TAG}"
 
 # Initialize an exit code variable
 EXIT_CODE=0

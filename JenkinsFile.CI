@@ -3,7 +3,8 @@
 // GLOBAL VARS
 PROJECT = "MonoRepo-X"
 REGISTRY_USER = "vjkancherla"
-BRANCH_NAME = "${env.GIT_BRANCH}"
+PYTHON_IMAGE_REPO = "${REGISTRY_USER}/python_app_jenkins"
+GO_IMAGE_REPO= "${REGISTRY_USER}/go_app_jenkins"
 
 def initialize() {
     def jobName = env.JOB_NAME

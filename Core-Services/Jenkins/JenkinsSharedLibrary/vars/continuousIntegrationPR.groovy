@@ -48,8 +48,20 @@ def call() {
 
             stage('Build Container') {
                 steps {
-                    //sh(libraryResource('buildContainerImage ${python_image_tag} ${go_image_tag}'))
-                    sh(script: "libraryResource('buildContainerImage.sh') ${python_image_tag} ${go_image_tag}", returnStatus: true)
+                    script {
+                        def GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+                        PYTHON_IMAGE_TAG = "${PYTHON_IMAGE_REPO}:${GIT_COMMIT_HASH}"
+                        GO_IMAGE_TAG = "${GO_IMAGE_REPO}:${GIT_COMMIT_HASH}"
+
+                        println("${PYTHON_IMAGE_TAG} :: ${GO_IMAGE_TAG}")
+                        
+                        withEnv(["PYTHON_IMAGE_TAG=${PYTHON_IMAGE_TAG}", "GO_IMAGE_TAG=${GO_IMAGE_TAG}"]) {
+                            sh(libraryResource('buildContainerImage'))
+                        }
+                        
+                    }
+                    
+                    
                 }
             }
             
