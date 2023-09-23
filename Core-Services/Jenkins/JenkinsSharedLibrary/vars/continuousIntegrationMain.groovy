@@ -2,6 +2,11 @@ def call() {
     pipeline {
         agent any
 
+        environment {
+            PYTHON_IMAGE_TAG = "${REGISTRY_USER}/python_app_jenkins:${GIT_COMMIT_HASH}"
+            GO_IMAGE_TAG = "${REGISTRY_USER}/go_app_jenkins:${GIT_COMMIT_HASH}"
+        }
+
         stages{
 
             stage('Lint Code') {
@@ -12,50 +17,42 @@ def call() {
 
             stage('Compile and Build Code') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Compile and Build Go Code"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Compile and Build Python Code"
-                    }
+                    sh(libraryResource('buildAndCompile.sh'))
                 }
             }
 
             stage('Unit Tests') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Run Unit Tests for Go"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Run Unit Tests for Python"
-                    }
+                    sh(libraryResource('runUnitTests.sh'))
                 }
             }
 
             stage('Static Code Analysis') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Run Static Code Analysis"
-                    }
+                    script {
+                        withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
+                            sh(libraryResource('sonarScanner.sh'))
+                        }
 
-                    dir('Microservices/Python-App') {
-                        echo "Run Static Code Analysis"
+                        timeout(time: 2, unit: 'MINUTES') {
+                            def qG = waitForQualityGate()
+                            if (qG.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qG.status}"
+                            }
+                        }
                     }
-                }
+                }                  
             }
-
 
             stage('Build Container') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Build Container for Go"
-                    }
+                    // script {
+                    //     def python_image_tag = REGISTRY_USER+"/python_app_jenkins:"+GIT_COMMIT_HASH
+                    //     def go_image_tag = REGISTRY_USER+"/go_app_jenkins:"+GIT_COMMIT_HASH
 
-                    dir('Microservices/Python-App') {
-                        echo "Build Container for Python"
-                    }
+                    //     sh(libraryResource('buildContainerImage ${python_image_tag} ${go_image_tag}'))
+                    // }
+                    sh(libraryResource('buildContainerImage ${python_image_tag} ${go_image_tag}'))
                 }
             }
 

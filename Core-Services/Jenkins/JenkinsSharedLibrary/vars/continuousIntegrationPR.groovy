@@ -31,16 +31,9 @@ def call() {
                         }
 
                         timeout(time: 2, unit: 'MINUTES') {
-                            def pythonQg = waitForQualityGate()
-                            if (pythonQg.status != 'OK') {
-                                error "Pipeline aborted due to quality gate failure: ${pythonQg.status}"
-                            }
-                        }
-
-                        timeout(time: 2, unit: 'MINUTES') {
-                            def goQg = waitForQualityGate()
-                            if (goQg.status != 'OK') {
-                                error "Pipeline aborted due to quality gate failure: ${goQg.status}"
+                            def qG = waitForQualityGate()
+                            if (qG.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qG.status}"
                             }
                         }
                     }
