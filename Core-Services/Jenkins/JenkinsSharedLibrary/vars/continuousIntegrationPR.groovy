@@ -48,7 +48,8 @@ def call() {
 
             stage('Build Container') {
                 steps {
-                    sh(libraryResource('buildContainerImage ${python_image_tag} ${go_image_tag}'))
+                    //sh(libraryResource('buildContainerImage ${python_image_tag} ${go_image_tag}'))
+                    sh(script: "libraryResource('buildContainerImage.sh') ${python_image_tag} ${go_image_tag}", returnStatus: true)
                 }
             }
             
