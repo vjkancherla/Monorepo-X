@@ -52,7 +52,7 @@ d. generate token and save the token
 
 [2] In Jenkins, install SonarQube Scanner Plugin and the Sonar Quality Gate plugin
 
-[3] Create a Jenkins Credential of type "secret text" and save the token from 1.d
+[3] Create a Jenkins Credential of type "secret text" and name - "sonarqube-token" save the token from step-1.d
 
 [4] Get the SonarQube URL
 >> docker ps | grep sonarqube

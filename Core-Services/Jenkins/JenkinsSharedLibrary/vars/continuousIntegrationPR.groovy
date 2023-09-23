@@ -6,50 +6,45 @@ def call() {
             
             stage('Lint Code') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Lint Go Code"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Lint Python Code"
-                    }
+                    sh(libraryResource('lint.sh'))
                 }
             }
 
             stage('Compile and Build Code') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Compile and Build Go Code"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Compile and Build Python Code"
-                    }
+                    sh(libraryResource('buildAndCompile.sh'))
                 }
             }
 
             stage('Unit Tests') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Run Unit Tests for Go"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Run Unit Tests for Python"
-                    }
+                    sh(libraryResource('runUnitTests.sh'))
                 }
             }
 
             stage('Static Code Analysis') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Run Static Code Analysis"
-                    }
+                    script {
+                        withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
+                            // sonarEnvVars = env
+                            sh(libraryResource('sonarScanner.sh'))
+                        }
 
-                    dir('Microservices/Python-App') {
-                        echo "Run Static Code Analysis"
+                        timeout(time: 2, unit: 'MINUTES') {
+                            def pythonQg = waitForQualityGate()
+                            if (pythonQg.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${pythonQg.status}"
+                            }
+                        }
+
+                        timeout(time: 2, unit: 'MINUTES') {
+                            def goQg = waitForQualityGate()
+                            if (goQg.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${goQg.status}"
+                            }
+                        }
                     }
-                }
+                }                  
             }
             
         }

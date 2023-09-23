@@ -2,7 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 
 environment   = os.getenv('ENVIRONMENT', 'dev')   # Default to 'dev' if not set
-image_version = os.getenv('IMAGE_VERSION', '1.0') # Default to '1.0' if not set
+image_version = os.getenv('IMAGE_VERSION', '1.0')  # Default to '1.0' if not set
 message       = os.getenv('MESSAGE', 'test message')       # Default to 'test message' if not set
 
 class MyHandler(BaseHTTPRequestHandler):
