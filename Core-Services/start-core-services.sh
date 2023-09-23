@@ -32,7 +32,7 @@ create_cluster_attempt=1
 create_cluster_max_attempts=3
 
 while [[ $create_cluster_attempt -le $create_cluster_max_attempts ]]; do
-  k3d cluster create mycluster -a 1
+  k3d cluster create mycluster -a 1 --subnet 172.19.0.0/16
   if [[ $? -eq 0 ]]; then
     echo "K3D cluster created successfully."
     break
@@ -88,6 +88,8 @@ docker run -d --name jenkins-docker \
 -v /Users/${username}/Downloads/jenkins-volume:/var/jenkins_home \
 -v /var/run/docker.sock:/var/run/docker.sock \
 --network=k3d-mycluster \
+--ip 172.19.0.6 \
+-e TZ=Asia/Kolkata \
 vjkancherla/my-jenkins:v1
 
 # Step 6: Start SonarQube in detached mode
@@ -96,6 +98,8 @@ docker run -d --name sonarqube \
 -p 9000:9000 -p 9092:9092 \
 -v /Users/${username}/Downloads/sonarqube-volume:/opt/sonarqube/data \
 --network=k3d-mycluster \
+--ip 172.19.0.7 \
+-e TZ=Asia/Kolkata \
 sonarqube:lts-community
 
 # Step 7: Start JFrog Artifactory in detached mode
@@ -104,6 +108,8 @@ docker run -d --name jfrog-artifactory \
 -p 8081:8081 -p 8082:8082 \
 -v /Users/${username}/Downloads/jfrog-artifactory-volume:/var/opt/jfrog/artifactory \
 --network=k3d-mycluster \
+--ip 172.19.0.8 \
+-e TZ=Asia/Kolkata \
 docker.bintray.io/jfrog/artifactory-oss:latest
 
 # Step 8: Verify Jenkins, SonarQube, and JFrog Artifactory containers
@@ -117,9 +123,9 @@ else
   echo "Error: Jenkins, SonarQube, and/or JFrog Artifactory containers failed to start."
 fi
 
-# Step 9: Get SonarQube server IP address
-sonarqube_server_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' sonarqube)
-echo "SonarQube server IP address: $sonarqube_server_ip"
+# # Step 9: Get SonarQube server IP address
+# sonarqube_server_ip=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' sonarqube)
+# echo "SonarQube server IP address: $sonarqube_server_ip"
 
 # Step 10: Copy ~/.kube/config to k3d-kubeconfig
 print_step "Copy ~/.kube/config to k3d-kubeconfig"
