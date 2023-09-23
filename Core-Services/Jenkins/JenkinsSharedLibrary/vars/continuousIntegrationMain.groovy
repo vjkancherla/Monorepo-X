@@ -3,6 +3,7 @@ def call() {
         agent any
 
         environment {
+            GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
             PYTHON_IMAGE_TAG = "${REGISTRY_USER}/python_app_jenkins:${GIT_COMMIT_HASH}"
             GO_IMAGE_TAG = "${REGISTRY_USER}/go_app_jenkins:${GIT_COMMIT_HASH}"
         }
