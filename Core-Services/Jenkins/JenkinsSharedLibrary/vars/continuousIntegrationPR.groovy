@@ -1,5 +1,9 @@
-def PYTHON_IMAGE_TAG = ""
-def Go_IMAGE_TAG = ""
+
+REGISTRY_USER = "vjkancherla"
+PYTHON_IMAGE_REPO = "${REGISTRY_USER}/python_app_jenkins"
+GO_IMAGE_REPO = "${REGISTRY_USER}/go_app_jenkins"
+PYTHON_IMAGE_TAG = ""
+GO_IMAGE_TAG = ""
 
 def call() {
     pipeline {
