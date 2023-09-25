@@ -14,7 +14,7 @@ build_python_docker_image() {
     cd "$python_dir" || exit 1  # Change to the Python directory; exit on failure
     
     # Build the Docker image using the Dockerfile in this directory
-    docker build -t "$python_image_tag" -f Dockerfile .
+    sudo docker build -t "$python_image_tag" -f Dockerfile .
 
     # Capture the exit code of the Docker build command and update the overall exit code
     dir_exit_code=$?
@@ -32,7 +32,7 @@ build_go_docker_image() {
     cd "$go_dir" || exit 1  # Change to the Go directory; exit on failure
     
     # Build the Docker image using the Dockerfile in this directory
-    docker build -t "$go_image_tag" -f Dockerfile .
+    sudo docker build -t "$go_image_tag" -f Dockerfile .
 
     # Capture the exit code of the Docker build command and update the overall exit code
     dir_exit_code=$?
