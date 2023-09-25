@@ -62,6 +62,16 @@ def call() {
                     }
                 }
             }
+
+            stage('Push Container to Docker Hub') {
+                steps {
+                    println("${PYTHON_IMAGE_TAG} :: ${GO_IMAGE_TAG}")
+                        
+                    withEnv(["PY_IMAGE_TAG=${PYTHON_IMAGE_TAG}", "GOO_IMAGE_TAG=${GO_IMAGE_TAG}"]) {
+                        sh(libraryResource('publishContainerImage.sh'))
+                    }
+                }
+            }
             
         }
     
