@@ -21,7 +21,7 @@ run_python_sonarqube_analysis() {
     coverage xml
 
     # Run the SonarScanner for your project with the stored token
-    sonar-scanner -Dsonar.scanner.metadataFilePath=${WORKSPACE}/Microservices/Python-App/src/python_report-task.txt
+    sonar-scanner
 
     # Capture the exit code of the SonarScanner command and update the overall exit code
     dir_exit_code=$?
@@ -39,7 +39,7 @@ run_go_sonarqube_analysis() {
     cd "$go_dir" || exit 1  # Change to the Go directory; exit on failure
     
     # Run the SonarScanner for your project with the stored token
-    sonar-scanner -Dsonar.scanner.metadataFilePath=${WORKSPACE}/Microservices/Podinfo-Frontend-App/src/go_report-task.txt
+    sonar-scanner
 
     # Capture the exit code of the SonarScanner command and update the overall exit code
     dir_exit_code=$?
