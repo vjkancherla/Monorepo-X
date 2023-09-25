@@ -1,9 +1,9 @@
+
 def call() {
     pipeline {
         agent any
         
-        stages {
-            
+        stages { 
             stage('Lint Code') {
                 steps {
                     sh(libraryResource('lint.sh'))
@@ -26,27 +26,18 @@ def call() {
                 steps {
                     script {
                         withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
-                            // sonarEnvVars = env
                             sh(libraryResource('sonarScanner.sh'))
                         }
 
                         timeout(time: 2, unit: 'MINUTES') {
-                            def pythonQg = waitForQualityGate()
-                            if (pythonQg.status != 'OK') {
-                                error "Pipeline aborted due to quality gate failure: ${pythonQg.status}"
-                            }
-                        }
-
-                        timeout(time: 2, unit: 'MINUTES') {
-                            def goQg = waitForQualityGate()
-                            if (goQg.status != 'OK') {
-                                error "Pipeline aborted due to quality gate failure: ${goQg.status}"
+                            def qG = waitForQualityGate()
+                            if (qG.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qG.status}"
                             }
                         }
                     }
                 }                  
             }
-            
         }
     
     }

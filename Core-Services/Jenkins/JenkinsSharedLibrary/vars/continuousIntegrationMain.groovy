@@ -1,9 +1,16 @@
+
 def call() {
+    REGISTRY_USER = "vjkancherla"
+    PYTHON_IMAGE_REPO = "${REGISTRY_USER}/python_app_jenkins"
+    GO_IMAGE_REPO = "${REGISTRY_USER}/go_app_jenkins"
+    PYTHON_IMAGE_TAG = ""
+    GO_IMAGE_TAG = ""
+    
     pipeline {
         agent any
-
-        stages{
-
+        
+        stages {
+            
             stage('Lint Code') {
                 steps {
                     sh(libraryResource('lint.sh'))
@@ -12,66 +19,64 @@ def call() {
 
             stage('Compile and Build Code') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Compile and Build Go Code"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Compile and Build Python Code"
-                    }
+                    sh(libraryResource('buildAndCompile.sh'))
                 }
             }
 
             stage('Unit Tests') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Run Unit Tests for Go"
-                    }
-
-                    dir('Microservices/Python-App') {
-                        echo "Run Unit Tests for Python"
-                    }
+                    sh(libraryResource('runUnitTests.sh'))
                 }
             }
 
             stage('Static Code Analysis') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Run Static Code Analysis"
-                    }
+                    script {
+                        withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
+                            // sonarEnvVars = env
+                            sh(libraryResource('sonarScanner.sh'))
+                        }
 
-                    dir('Microservices/Python-App') {
-                        echo "Run Static Code Analysis"
+                        timeout(time: 2, unit: 'MINUTES') {
+                            def qG = waitForQualityGate()
+                            if (qG.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qG.status}"
+                            }
+                        }
                     }
-                }
+                }                  
             }
-
 
             stage('Build Container') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Build Container for Go"
-                    }
+                    script {
+                        def GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+                        PYTHON_IMAGE_TAG = "${PYTHON_IMAGE_REPO}:${GIT_COMMIT_HASH}"
+                        GO_IMAGE_TAG = "${GO_IMAGE_REPO}:${GIT_COMMIT_HASH}"
 
-                    dir('Microservices/Python-App') {
-                        echo "Build Container for Python"
+                        println("${PYTHON_IMAGE_TAG} :: ${GO_IMAGE_TAG}")
+                        
+                        withEnv(["PY_IMAGE_TAG=${PYTHON_IMAGE_TAG}", "GOO_IMAGE_TAG=${GO_IMAGE_TAG}"]) {
+                            sh(libraryResource('buildContainerImage.sh'))
+                        }
                     }
                 }
             }
 
             stage('Push Container to Docker Hub') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Push Container for Go"
-                    }
+                    println("${PYTHON_IMAGE_TAG} :: ${GO_IMAGE_TAG}")
 
-                    dir('Microservices/Python-App') {
-                        echo "Push Container for Python"
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        withEnv(["PY_IMAGE_TAG=${PYTHON_IMAGE_TAG}", "GOO_IMAGE_TAG=${GO_IMAGE_TAG}"]) {
+                            sh(libraryResource('publishContainerImage.sh'))
+                        }
+                    
                     }
                 }
             }
             
         }
-
+    
     }
 }

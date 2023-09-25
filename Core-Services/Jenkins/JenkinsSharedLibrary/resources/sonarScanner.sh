@@ -3,6 +3,11 @@
 # Initialize an exit code variable
 EXIT_CODE=0
 
+# Loop through all environment variables and print them
+for var in $(env); do
+    echo "$var"
+done
+
 # Function to run SonarQube analysis for Python code
 run_python_sonarqube_analysis() {
     local python_dir="Microservices/Python-App/src"

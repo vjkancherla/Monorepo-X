@@ -1,5 +1,8 @@
 @Library(['my-shared-library'])
 
+// GLOBAL VARS
+PROJECT = "MonoRepo-X"
+
 def initialize() {
     def jobName = env.JOB_NAME
 
