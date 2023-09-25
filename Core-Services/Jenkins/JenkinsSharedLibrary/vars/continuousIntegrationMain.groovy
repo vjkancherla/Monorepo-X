@@ -1,15 +1,16 @@
+
 def call() {
+    REGISTRY_USER = "vjkancherla"
+    PYTHON_IMAGE_REPO = "${REGISTRY_USER}/python_app_jenkins"
+    GO_IMAGE_REPO = "${REGISTRY_USER}/go_app_jenkins"
+    PYTHON_IMAGE_TAG = ""
+    GO_IMAGE_TAG = ""
+    
     pipeline {
         agent any
-
-        environment {
-            GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
-            PYTHON_IMAGE_TAG = "${REGISTRY_USER}/python_app_jenkins:${GIT_COMMIT_HASH}"
-            GO_IMAGE_TAG = "${REGISTRY_USER}/go_app_jenkins:${GIT_COMMIT_HASH}"
-        }
-
-        stages{
-
+        
+        stages {
+            
             stage('Lint Code') {
                 steps {
                     sh(libraryResource('lint.sh'))
@@ -32,6 +33,7 @@ def call() {
                 steps {
                     script {
                         withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
+                            // sonarEnvVars = env
                             sh(libraryResource('sonarScanner.sh'))
                         }
 
@@ -47,29 +49,34 @@ def call() {
 
             stage('Build Container') {
                 steps {
-                    // script {
-                    //     def python_image_tag = REGISTRY_USER+"/python_app_jenkins:"+GIT_COMMIT_HASH
-                    //     def go_image_tag = REGISTRY_USER+"/go_app_jenkins:"+GIT_COMMIT_HASH
+                    script {
+                        def GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+                        PYTHON_IMAGE_TAG = "${PYTHON_IMAGE_REPO}:${GIT_COMMIT_HASH}"
+                        GO_IMAGE_TAG = "${GO_IMAGE_REPO}:${GIT_COMMIT_HASH}"
 
-                    //     sh(libraryResource('buildContainerImage ${python_image_tag} ${go_image_tag}'))
-                    // }
-                    sh(libraryResource('buildContainerImage ${python_image_tag} ${go_image_tag}'))
+                        println("${PYTHON_IMAGE_TAG} :: ${GO_IMAGE_TAG}")
+                        
+                        withEnv(["PY_IMAGE_TAG=${PYTHON_IMAGE_TAG}", "GOO_IMAGE_TAG=${GO_IMAGE_TAG}"]) {
+                            sh(libraryResource('buildContainerImage.sh'))
+                        }
+                    }
                 }
             }
 
             stage('Push Container to Docker Hub') {
                 steps {
-                    dir('Microservices/Podinfo-Frontend-App') {
-                        echo "Push Container for Go"
-                    }
+                    println("${PYTHON_IMAGE_TAG} :: ${GO_IMAGE_TAG}")
 
-                    dir('Microservices/Python-App') {
-                        echo "Push Container for Python"
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        withEnv(["PY_IMAGE_TAG=${PYTHON_IMAGE_TAG}", "GOO_IMAGE_TAG=${GO_IMAGE_TAG}"]) {
+                            sh(libraryResource('publishContainerImage.sh'))
+                        }
+                    
                     }
                 }
             }
             
         }
-
+    
     }
 }
