@@ -3,6 +3,11 @@
 # Initialize an exit code variable
 EXIT_CODE=0
 
+# Loop through all environment variables and print them
+for var in $(env); do
+    echo "$var"
+done
+
 # Function to run SonarQube analysis for Python code
 run_python_sonarqube_analysis() {
     local python_dir="Microservices/Python-App/src"
@@ -16,7 +21,7 @@ run_python_sonarqube_analysis() {
     coverage xml
 
     # Run the SonarScanner for your project with the stored token
-    sonar-scanner
+    sonar-scanner -Dsonar.scanner.metadataFilePath=${WORKSPACE}/Microservices/Python-App/go_report-task.txt
 
     # Capture the exit code of the SonarScanner command and update the overall exit code
     dir_exit_code=$?
@@ -34,7 +39,7 @@ run_go_sonarqube_analysis() {
     cd "$go_dir" || exit 1  # Change to the Go directory; exit on failure
     
     # Run the SonarScanner for your project with the stored token
-    sonar-scanner
+    sonar-scanner -Dsonar.scanner.metadataFilePath=${WORKSPACE}/Microservices/Podinfo-Frontend-App/go_report-task.txt
 
     # Capture the exit code of the SonarScanner command and update the overall exit code
     dir_exit_code=$?
