@@ -1,10 +1,7 @@
 @Library(['my-shared-library'])
 
 // GLOBAL VARS
-env.PROJECT = "MonoRepo-X"
-env.REGISTRY_USER = "vjkancherla"
-env.PYTHON_IMAGE_REPO = "${REGISTRY_USER}/python_app_jenkins"
-env.GO_IMAGE_REPO = "${REGISTRY_USER}/go_app_jenkins"
+PROJECT = "MonoRepo-X"
 
 def initialize() {
     def jobName = env.JOB_NAME
