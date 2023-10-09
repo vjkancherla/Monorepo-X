@@ -1,4 +1,9 @@
-@Library(['my-shared-library'])
+// Use the default version of shared library as defined in the Jenkins console.
+// The default version maps to the "Main" branch
+//@Library(['my-shared-library'])
+
+// Override the default version and use branch "New-CI-WorkFlow" as our version
+@Library('my-shared-library@New-CI-WorkFlow) _
 
 // GLOBAL VARS
 PROJECT = "MonoRepo-X"

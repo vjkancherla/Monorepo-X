@@ -5,6 +5,7 @@ def call() {
     GO_IMAGE_REPO = "${REGISTRY_USER}/go_app_jenkins"
     PYTHON_IMAGE_TAG = ""
     GO_IMAGE_TAG = ""
+    GIT_COMMIT_HASH = ""
     
     pipeline {
         agent any
@@ -50,7 +51,7 @@ def call() {
             stage('Build Container') {
                 steps {
                     script {
-                        def GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
+                        GIT_COMMIT_HASH = sh (script: "git log -n 1 --pretty=format:'%H'", returnStdout: true)
                         PYTHON_IMAGE_TAG = "${PYTHON_IMAGE_REPO}:${GIT_COMMIT_HASH}"
                         GO_IMAGE_TAG = "${GO_IMAGE_REPO}:${GIT_COMMIT_HASH}"
 
@@ -60,6 +61,12 @@ def call() {
                             sh(libraryResource('buildContainerImage.sh'))
                         }
                     }
+                }
+            }
+
+            stage('Scan Container Image') {
+                steps {
+                    echo "Scanning the built container images locally."
                 }
             }
 
@@ -75,7 +82,36 @@ def call() {
                     }
                 }
             }
+
+            stage('Deploy Apps using Helm') {
+                steps {
+                    withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
+                        withEnv(["PY_IMAGE_TAG=${PYTHON_IMAGE_TAG}", "GOO_IMAGE_TAG=${GO_IMAGE_TAG}"]) {
+                            sh(libraryResource('helmWetRun.sh'))
+                        }
+                    }
+                }
+            }
             
+            stage('Run TestSuite: Integration tests') {
+                 steps {
+                    withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
+                        withEnv(["COMMIT_HASH=${GIT_COMMIT_HASH}"]) {
+                            sh(libraryResource('runTestSuite.sh'))
+                        }
+                    }
+                }
+            }
+
+            stage('TearDown NS') {
+                steps {
+                    withCredentials([file(credentialsId: 'k3d-config', variable: 'KUBECONFIG')]) {
+                        withEnv(["NAMESPACE_ENV_VAR=ci-main-${GIT_COMMIT_HASH}.substring(0, 4)"]) {
+                            sh(libraryResource('teardownNamespace.sh'))
+                        }
+                    }
+                }
+            }
         }
     
     }
