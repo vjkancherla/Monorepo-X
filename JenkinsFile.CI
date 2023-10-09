@@ -3,7 +3,7 @@
 //@Library(['my-shared-library'])
 
 // Override the default version and use branch "New-CI-WorkFlow" as our version
-@Library('my-shared-library@New-CI-WorkFlow) _
+@Library('my-shared-library@New-CI-WorkFlow') _
 
 // GLOBAL VARS
 PROJECT = "MonoRepo-X"
