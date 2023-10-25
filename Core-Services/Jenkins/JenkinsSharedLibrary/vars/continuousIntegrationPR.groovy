@@ -8,6 +8,17 @@ def call() {
 
     pipeline {
         agent any
+
+        options {
+            // how and when build records or artifacts are discarded for a particular Jenkins job or pipeline
+            buildDiscarder(logRotator(numToKeepStr: '5', artifactNumToKeepStr: '5'))
+
+            // prevent multiple concurrent executions of the entire job or a specific stage
+            disableConcurrentBuilds()
+
+            // display the timestamp for when that code or step starts and finishes executing
+            timestamps()
+        }
         
         stages { 
             stage('Lint Code') {
