@@ -27,17 +27,18 @@ def call() {
                         environment {
                             PROJECT="python"
                         }
-                        sh(libraryResource('lint_v2.sh'))
+                        steps {
+                            sh(libraryResource('lint_v2.sh'))
+                        }
                     }
                     stage ('Lint Go Project') {
                         environment {
                             PROJECT="go"
                         }
-                        sh(libraryResource('lint_v2.sh'))
+                        steps {
+                            sh(libraryResource('lint_v2.sh'))
+                        }
                     }
-                }
-                steps {
-                    sh(libraryResource('lint.sh'))
                 }
             }
 
