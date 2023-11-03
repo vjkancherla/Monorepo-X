@@ -22,7 +22,7 @@ def call() {
         
         stages { 
             stage('Lint Code') {
-                parellel(failFast: true) {
+                parallel(failFast: true) {
                     stage ('Lint Python Project') {
                         environment {
                             PROJECT="python"
