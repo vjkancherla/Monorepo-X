@@ -64,8 +64,23 @@ def call() {
             }
 
             stage('Unit Tests') {
-                steps {
-                    sh(libraryResource('runUnitTests.sh'))
+                parallel(failFast: true) {
+                    stage ('Unit Tests: Python Project') {
+                        environment {
+                            PROJECT="python"
+                        }
+                        steps {
+                            sh(libraryResource('runUnitTests_v2.sh'))
+                        }
+                    }
+                    stage ('Unit Tests: Go Project') {
+                        environment {
+                            PROJECT="go"
+                        }
+                        steps {
+                            sh(libraryResource('runUnitTests_v2.sh'))
+                        }
+                    }
                 }
             }
 
@@ -73,7 +88,7 @@ def call() {
                 steps {
                     script {
                         withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
-                            sh(libraryResource('sonarScanner.sh'))
+                            sh(libraryResource('sonarScanner_V2.sh'))
                         }
 
                         timeout(time: 2, unit: 'MINUTES') {
@@ -83,7 +98,7 @@ def call() {
                             }
                         }
                     }
-                }                  
+                }
             }
 
             stage('Build Container') {
