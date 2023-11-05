@@ -85,42 +85,16 @@ def call() {
             }
 
             stage('Static Code Analysis') {
-                parallel(failFast: true) {
-                    stage ('Static Code Analysis: Python Project') {
-                        environment {
-                            PROJECT="python"
+                steps {
+                    script {
+                        withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
+                            sh(libraryResource('sonarScanner_V2.sh'))
                         }
-                        steps {
-                            script {
-                                withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
-                                    sh(libraryResource('sonarScanner_V2.sh'))
-                                }
 
-                                timeout(time: 2, unit: 'MINUTES') {
-                                    def qG = waitForQualityGate()
-                                    if (qG.status != 'OK') {
-                                        error "Pipeline aborted due to quality gate failure: ${qG.status}"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    stage ('Static Code Analysis: Go Project') {
-                        environment {
-                            PROJECT="python"
-                        }
-                        steps {
-                            script {
-                                withSonarQubeEnv(installationName: 'SonarQube-on-Docker') {
-                                    sh(libraryResource('sonarScanner_V2.sh'))
-                                }
-
-                                timeout(time: 2, unit: 'MINUTES') {
-                                    def qG = waitForQualityGate()
-                                    if (qG.status != 'OK') {
-                                        error "Pipeline aborted due to quality gate failure: ${qG.status}"
-                                    }
-                                }
+                        timeout(time: 2, unit: 'MINUTES') {
+                            def qG = waitForQualityGate()
+                            if (qG.status != 'OK') {
+                                error "Pipeline aborted due to quality gate failure: ${qG.status}"
                             }
                         }
                     }
